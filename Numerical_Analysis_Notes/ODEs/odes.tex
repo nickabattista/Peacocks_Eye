@@ -1,0 +1,296 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+\usepackage{algpseudocode}
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+%\setlength{\headheight}{13.6pt} % Customize the height of the header
+\setlength{\headheight}{2.6pt} % Customize the height of the header
+
+\newtheorem{theorem}{Theorem}
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+\textsc{Scientific Computation Comp. Review} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{1pt} \\[0.05cm] % Thin top horizontal rule
+\huge Topic: ODEs \\ % The assignment title
+\horrule{1pt} \\[0.05cm] % Thick bottom horizontal rule
+}
+
+\author{Nick Battista} % Your name
+
+\date{\normalsize Date Created: 5/21/2014} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	Introduce the problem
+%----------------------------------------------------------------------------------------
+
+\section{Background}
+
+It's no surprise that most ODEs cannot be solved analytically, even with the patience of a saint and a love of wasting paper. Luckily computers enjoying doing a lot of fast computations and arithmetic and we'll discuss how to work out a deal with them to find our desired solution to the ODE we're studying.\\
+
+For the remainder of this section, we'll use the following notation, $$\frac{dy}{dt} = f(t, y(t) ),$$ with initial value, $y(0) = y_0$. \\
+
+In general, $f(t,y(t))$ is any function, linear or nonlinear and the like, of both the independent variable, $t$, and dependent variable $y(t)$. Before we talk about numerical analysis of ODEs, we'll review a few quick tidbits from analysis, namely \emph{existence} and \emph{uniqueness} (Don't worry, they're useful and cute.)
+
+\subsection{Existence and Uniqueness}
+
+Consider a region $R = [t_0-\alpha,t_0+\alpha]\times[y_0-\beta,y_0+\beta]$, for some $\alpha,\beta >0$, and $M=\max_R( |f(t,y(t))| )$. 
+
+\subsubsection{Analysis: Existence} If $f(t,y(t))$ is continuous, $|f|\leq M$ in $R$, then $y(t)$ exists in a neighborhood of $t_0$, $|t-t_0|\leq \alpha$.
+
+\subsubsection{Analysis: Uniqueness} We have two different ways to look at uniqueness,
+
+\begin{itemize}
+	\item If $f(t,y(t))$ is continuous, $|f|\leq M$ in $R$, and $\frac{df}{dt}$ and $\frac{df}{dy}$ are continuous, then the solution is unique. 
+	\item If $f(t,y(t))$ is \emph{Lipschitz continuous}, i.e., if in $R \exists L$ such that $|f(t,y_1)-f(t,y_2)| \leq L |y_1-y_2|$, then $f(t,y(t))$ is \emph{Lipschitz continuous} and the solution exists and is unique to the ODE.
+\end{itemize}
+
+Note: If $\frac{df}{dy}$ exists and $L$ is connected to $\frac{df}{dy}$, and for some $\xi\in (y_1,y_2)$ where $f(y_1)-f(y_2) = f'(\xi) (y_1-y_2)$, then $L = \max_{\xi\in(y_1,y_2)} \left| \frac{df}{dy}(t,\xi) \right|$. \\
+
+
+\subsection{Introduction of Numeric Methods}
+
+$ $\\
+
+Just like doing various Riemann sum schemes for approximating integrals in Calculus, a similar (fun) experience is had by students in introductory ODE class, where students approximate solutions to (usually unncessarily simplistic) differential equations by hand, using a scheme called the \emph{Euler Method}. \\
+
+Unfortunately, most students don't realize the tremendous power they were just handed in that (little bit of heaven) in class since they are just applying it to toy problems. Let's take a look. The Euler Method is defined by
+
+%\begin{equation}
+%\label{euler} 
+$$y_{n+1} = y_{n} + h f(t,y_n),$$
+%\end{equation}
+
+where $h$ is called the step-size. We find successive approximations to the solution of a differential equation by \emph{time-stepping} forward, using each successive value to find the next. Essentially we would like $h$ to be as small as possible. There's natural logic - the smaller $h$ is, the closer all of numerical solution values are to the previous value, so less error may compound over time. Although this is true and feels right, making $h$ too small results in computations that take orders of magnitude longer to solve.\\
+
+Luckily for us, we'll discuss ways to get around this problem of making $h$ ridiculously minuscule to find a highly accurate solution. Like root finding methods having different orders of convergence, we find different ODE numerical solvers have different orders of accuracy. It turns out that Euler's Method is only $1^{st}$ order. In a few minutes, we'll explore this idea further, but now I'll just list a few other popular ODE numeric methods.
+
+\begin{itemize}
+\item {\bf{Implicit Euler}}\  \ $y_{n+1} = y_{n} + h f(t_{n+1},y_{n+1})$ 
+
+	We see that the above looks strikingly similar to Euler's Method, except with future values of $t_{n+1}$ and $y_{n+1}$ inside the function $f$. Implicit methods are used for \emph{stability} reasons for \emph{stiff} differential equations. In order to step forward in time for this method, you will need use your favorite root-finding method as well. Like its explicit brother, the Euler Method, it is only $1^{st}$ order but has more useful stability properties.
+
+\item {\bf{Trapezoid}}\ \ $y_{n+1} = y_{n} + \frac{1}{2} \left[ f(t_n,y_n) + f(t_{n+1},y_{n+1}) \right]$ 
+
+	It is apparent this seems to be a hybrid of both the Euler method and the Implicit Euler method. Hence it is still implicit and a root-finding algorithm must be used as well. However, unlike the explicit and implicit Euler Methods, Trapezoid is a $2^{nd}$ order method.
+
+\item {\bf{Taylor Methods}}\ \ $y_{n+1} = y_{n} + h f(t_n,y_n) + \frac{1}{2} h^2 \left(\frac{d}{dt}\right)^2 f(t_n,y_n) + ...$
+
+	This method flat out resembles a sort of Taylor Series. It is. However, is exhibits $k^{th}$ order accuracy, which is splendid, but unfortunately it falls into a mess of stability problems in many problems. Don't worry, we'll get to more of this stability business in a bit.
+
+\item {\bf{RK2}} (Runge-Kutta-2)\ \ $y_{n+1} = y_n + \frac{h}{2} \left[ f(t_n,y_n) + f(t_n,y_n+hf(y_n))  \right]$
+
+	The Runge-Kutta methods have a different flavor than the other examples above. In that they are not examples of \emph{multi-step} methods but in a class of their own. This particular Runge-Kutta method has $2^{nd}$ order accuracy.
+
+\item {\bf{RK4}} (Runge-Kutta-4)\ \ $y_{n+1} = y_{n} + \frac{1}{6} \left[ k_1 + 2k_2 + 2k_3 + k_4  \right]$, where
+
+\begin{align}
+\nonumber
+\begin{split}
+k_1 &=  h f(t_n,y_n) \\
+k_2 &= h f(t_n+\frac{h}{2}, y_n+ \frac{1}{2} k_1) \\
+k_3 &= h f(t_n+\frac{h}{2}, y_n+ \frac{1}{2} k_2) \\
+k_4 &= h f(t_n+h, y_n+k_3)
+\end{split}	
+\end{align}
+
+	The RK4 method is arguably the most popular ODE numerical scheme that is used. Although it is not usually used employed in an \emph{adaptive} scheme, meaning the step-size $h$ changes appropriately as the solver time-steps, to preserve the desired amount of accuracy as the solution moves forward in time, without having to use the worst case scenario $h$ in that region, i.e., for regions where the solution is more singular than others you'd expect $h$ to be very tiny, while regions where the solution is extremely smooth you could expect to use a larger $h$ and get desired accuracy. Oh, and also this cute little method has $4^{th}$ accuracy.
+
+\end{itemize}
+
+There are many other popular methods that go by name, but memorizing all these methods isn't a good use of brain resources at this junction, especially when there is so much more mathematical magic to be studied!
+
+\subsubsection{Multi-step Methods!}
+
+The general multi-step method has the (seemingly) complicated form,
+
+$$y_{n+1} = \sum_{j=0}^{p} a_{j} y_{n-j} + h \sum_{j=-1}^{p} b_j f(t_{n-j},y_{n-j}),$$
+
+where $\{a_{j}\}$ and $\{b_j\}$ are coefficients we'll discuss how to explicitly find later. Note if $b_{-1}=0$ then method is \emph{explicit}, but it is \emph{implicit} if $b_{-1}\neq 0$. Also, we can think about multi-step methods as being derived through interpolating polynomials, i.e.,
+
+$$y_{n+1} = y_n + \int_{t_n}^{t_{n+1}} f(t,y(t)) dt,$$
+
+where you would interpolate or integrate $f(t,y(t))$ using some stencil and thereby deriving a specific multi-step scheme. These methods offer both advantages and disadvantages.\\
+
+One advantage is that they only require $1$ function call per time-step because everything from previous was already computed. Compared to $RK4$, which requires $4$ function calls per time-step. Hence in theory a multi-step method should be about $4$ times faster than $RK4$! One disadvantage is that multi-step methods \emph{must} use uniform step sizes, unlike Runge-Kutta methods, which can used in an adaptive time-stepping algorithm.
+
+Now it's time to discuss how to tell a good multi-step method from a dud. As alluded to above, we need to choose the coefficients $\{a_{j}\}$ and $\{b_j\}$ in some way - why not choose a way that will guarantee convergence! Splendid! It is now time to go down the rabbit hole of the \emph{Dahlquist Equivalence Theorem}, which unites consistency and stability  to convergence for a numerical ODE method. We'll begin by stating the theorem
+
+\begin{theorem}
+A multi-step method is convergent if and only if it is consistent and stable.
+\end{theorem}
+
+Well, that's concise. Let's chat about what \emph{consistency} and \emph{stability} mean in this context.
+
+\paragraph{Consistency}  A numerical ODE method is said to be consistent if the multi-step discretization satisfies the governing ODE in the limit as $h\rightarrow 0$.\\
+
+Okay, done. Nah, let's look at a few examples to solidify this concept.
+
+\begin{itemize}
+\item {\bf{Example 1:}} Euler Method \ \  \ $y_{n+1} = y_n + h f(t_n,y_n)$ 
+
+How do we show the discretization satisfies the governing equation in the limit as $h\rightarrow 0$? Well, when in doubt call on your old friend - Taylor Series. Since we assume $h$ is \emph{sufficiently small}, meaning $h$ is fine for numerical analysis in a hand-wavy sense, we can write $y_{n+1}$ in a Taylor series from the previous value, $y_n$.
+
+$$y_{n+1} = y_n + h \frac{d}{dt} y_n + \frac{1}{2!} h^2 \frac{d^2}{dt^2} y_{n} + ...$$
+
+Substituting the above into the Euler Method and rearranging, we find
+
+$$\left[y_n + h \frac{d}{dt} y_n + \frac{1}{2!} h^2 \frac{d^2}{dt^2} y_{n} + ...\right] - y_n = h f(t_n,y_n),$$
+
+and hence we see
+
+\begin{align}
+\nonumber
+\begin{split}
+ \frac{dy_{n}}{dt} &= f(t_n,y_n) - \frac{1}{2!} h \frac{d^2 y_n}{dt^2} + ... \\ \\
+\rightarrow \frac{dy_{n}}{dt}&= f(t_n,y_n) - O(h) \\
+\end{split}
+\end{align}
+
+Taking the limit as $h\rightarrow 0$, it is clear the governing ODE is satisfied, namely $\frac{dy}{dt} = f(t,y(t))$. Moreover, note that the governing ODE is satisfied linearly as $h\rightarrow 0$. \\
+
+\item {\bf{Example 2:}} Two-Step Adams-Bashforth Method \ \ \ $y_{n+1} = y_n + \frac{3}{2}h\ f(t_n,y_n) - \frac{1}{2} h\ f(t_{n-1},y_{n-1})$
+
+Although, this looks a bit more complicated, the analysis will proceed exactly the same, except now we \emph{get} to play with even more Taylor Series! Check it out.
+
+\begin{align}
+\nonumber
+\begin{split}
+y_{n+1} &= y_n + h \frac{d}{dt} y_n + \frac{1}{2!} h^2 \frac{d^2}{dt^2} y_{n} + ... \\ \\
+f(t_{n-1},y_{n-1}) = f(t_n,y_n) - h \frac{d}{dt} f(t_n,y_n) + \frac{1}{2}\ h^2 f(t_n,y_n) + ... \\ 
+\end{split}
+\end{align}
+
+Substituting the above series into the numerical method and rearranging, we find
+
+\begin{align}
+\nonumber
+\begin{split}
+y_{n+1} - y_n &= \frac{3}{2}h\ f(t_n,y_n) - \frac{1}{2} h\ f(t_{n-1},y_{n-1}) \\ \\
+\left[ y_n + h \frac{d}{dt} y_n + \frac{1}{2!} h^2 \frac{d^2}{dt^2} y_{n} + ...\ \right] - y_n &= \frac{3}{2}h\ f(t_n,y_n) - \frac{1}{2}\ h\left[ f(t_n,y_n) - h \frac{d}{dt} f(t_n,y_n) + \frac{1}{2}\ h^2 f(t_n,y_n) + ... \  \right] \\ \\
+\frac{dy_n}{dt}  + \frac{1}{2!}\ h \frac{d^2 y_n}{dt^2}  + ... &= f(t_n,y_n) +  \frac{1}{2}\ h \frac{d}{dt} f(t_n,y_n) - \frac{1}{4}\ h^2 \frac{d^2}{dt^2} f(t_n,y_n) + ... \\ \\
+\frac{dy_n}{dt} &= f_n - \frac{1}{2}\ h\left[ \frac{d^2 y_n}{dt^2} -  \frac{d}{dt} f_n \right] - h^2 \left[ \frac{1}{3!} \frac{d^3 y_n}{dt^3} +  \frac{1}{4} \frac{d^2}{dt^2} f_n \right] + ... \\
+\end{split}
+\end{align}
+
+where $f_n = f(t_n,y_n)$. Recall that the original ODE was, $$\frac{dy}{dt} = f(t,y(t)).$$ Differentiating both sides with respect to $t$, we find $$\frac{d^2 y_n}{dt^2} = \frac{d}{dt} f(t_n,y_n).$$ Hence we see that, $$\frac{dy_n}{dt} = f(t_n,y_n) + O(h^2).$$ Therefore as $h\rightarrow 0$, we see the discretization satisfies the governing equation to second order accuracy. 
+
+\end{itemize}
+
+\paragraph{Stability \emph{(Zero-Stability)} } A numerical method is \emph{zero-stable} if the solution remains bounded as $h\rightarrow 0$ for finite overall time. 
+
+For a general multi-step method, as $h\rightarrow 0$, $$y_{n+1} = \sum_{j=0}^{p} a_{j} y_{n-j}.$$ The above equation is a linear difference equation, which can be solved explicitly using standard recursive methods, i.e., let 
+
+\begin{align}
+\nonumber
+\begin{split}
+y_{n+1} &= \lambda y_{n} \\
+y_{n} &= \lambda y_{n-1} \\
+&\vdots \\
+y_{n-p+1} &= \lambda y_{n-p} \\
+\end{split}
+\end{align}
+
+and therefore we get:
+
+$$\lambda^p - \sum_{j=0}^{p} a_{j} \lambda^{p-1-j} = 0.$$
+
+Now doing every high schoolers dream is to do nothing but solve these types of algebraic equations. Assuming you're able to accomplish that feat, if $$|\lambda| \leq 1,$$ the method is \emph{zero-stable}. \\
+
+
+
+%------------------------------------
+%
+%
+% Runge Kutta Methods
+%
+%
+% -----------------------------------
+
+\subsection{Runge-Kutta Methods}
+
+$ $\\
+
+At first glance, Runge-Kutta methods look overly complicated compared to their multi-step comrades.The complicated function evaluations come into play from the beautiful mechanics behind Runge-Kutta methods, where trial steps are used in intermediate points of a single time-step interval to cancel out lower-order error terms. \\
+
+In general, Runge-Kutta methods match Taylor expansions as high as possible. The general form of a Runge-Kutta method is $$y_{n+1} = y_{n} + \sum_{j=1}^N a_{j} K_{j},$$ where 
+
+\begin{align}
+\nonumber
+\begin{split}
+K_{j} &= h f\left(t_{n}+c_{j}h, y_{n} +\sum_{m=1}^{j-1} d_{jm} K_{m}  \right) \\ \\
+c_{j} &= \sum_{m=1}^{j-1} d_{jm}. \\
+\end{split}
+\end{align}
+
+By matching coefficients with those of a Taylor series of desired order, say $N$, we can find all necessary coefficients above for a method with desired truncation error, $O(h^N)$.\\
+
+Note, compared to multi-step methods, the Runge-Kutta method has an easy test for \emph{consistency}. It's actually given by the bottom equation above, if $c_{j} = \sum_{m=1}^{j-1} d_{jm}$ the method is consistent.
+
+It's time to briefly chat about stability. For Runge-Kutta methods, we'll consider the concept of \emph{B-stability}. Consider 3 matrices, $B,M$ and $Q$. Let 
+\begin{align}
+\nonumber
+\begin{split}
+{\bf{a}} &= (a_1,a_2,...,a_p)^T \\ 
+D &= \left[ d_{jm} \right] \\
+A &= diag(a_1,a_2,...,a_p). \\ 
+M &= AD+ D^TA - {{\bf{aa^T}}} \\
+Q &= AD^{-1} +D^{-T} A-D^{-T} {\bf{aa^{T}}} D^{-1}.\\
+\end{split}
+\end{align}
+
+If matrices $A$ and $Q$ are non-negative definite, then the Runge-Kutta scheme is said to be \emph{B-stable}. Note If matrices $A$ and $M$ are both non-negative definite, then the method is said to be \emph{algebraically stable}.
+
+\end{document}
