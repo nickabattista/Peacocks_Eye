@@ -1,0 +1,174 @@
+\graphicspath{{./Greens_Function/}}
+
+\section{Green's Function}
+
+A Green's function, denoted $G(x,s)$, is associated with specific linear differential operator, $\hat{L}$. It is the solution to 
+\begin{equation}
+\label{Greens_Def} \hat{L}G(x,s) = \delta(x-s),
+\end{equation}
+
+where $\delta(x-s)$ is the Dirac-delta function. As applied mathematicians we wish to exploit properties of the Green's function that makes them particularly useful for solving non-homogeneous differential equations, whether they are of the \emph{ordinary} or \emph{partial} varieties, e.g., Green's functions can be used for finding solutions to equations of the form
+\begin{equation}
+\label{bvp_ode} \hat{L} u(x) = f(x),
+\end{equation}
+
+where $u(x)$ is the solution we seek and $\hat{L}$ is some differential operator. Specifically we will use them to solve non-homogeneous boundary value problems (BVPs). We note that BVPs sometimes do not have solutions, so we will illustrate the main concepts of Green's Function using ``nice" linear differential operators. 
+
+\subsection{Big Picture of Green's Functions}
+
+We consider $L$ to be of the Sturm-Liouville family of differential operators, i.e., 
+\begin{equation}
+\label{sturm_liouville_op} \hat{L} = \frac{d}{dx} \left( p(x) \frac{d}{dx} \right) + q(x),
+\end{equation}
+
+where we presume $p(x)$ and $q(x)$ are continuous functions on some interval of interest, say $[a,b]$. Naturally, we have some boundary conditions, written in the form,
+\begin{equation}
+\hat{D}u = \left\{ \begin{array}{c}
+c_1 u'(a)+c_2 u(a) = 0 \\
+c_3 u'(b) + c_4 u(b) = 0.
+\end{array}\right.
+\end{equation}
+
+Note: we call the operator $\hat{D}$, the \emph{boundary conditions operator}. (very creatively, in fact). 
+
+We consider the following BVP,
+\begin{equation}
+\label{BVP} \hat{L}u(x) = f(x)  \ \ \ \  w/ \ \ \ \  \hat{D} u = 0,
+\end{equation}
+
+where $f(x)$ is continuous on $[a,b]$. We can induce there is only one solution to the above BVP, given by 
+\begin{equation}
+\label{greens_solution} u(x) = \int_a^b G(x,s) f(x) ds.
+\end{equation}
+
+The name of the game will then be constructing the appropriate Green's function for the specific linear differential operator. It is clear once we have the Green's function, we can change the non-homogeneous term in the BVP, i.e., $f(x)$, and assuming our integration skills are up to it, find the solution $u(x)$ to our BVP.
+
+\subsection{Properties of Green's Functions}
+
+Green's functions have the following properties:
+\begin{itemize}
+\item $G(x,s)$ is \emph{continuous} in $x$ and $s$
+\item For $x\neq s$, $\hat{L}G(x,s) = 0.$
+\item For $s\neq 0$, $\hat{D} G(x,s) = 0.$
+\item Symmetry Condition: $G(x,s) = G(s,x)$.
+\item Jump Discontinuity: $G'(s_{+},s) - G'(s_{-},s) = \frac{1}{p(s)}.$
+\end{itemize}
+
+{\bf{Note:}} Many of our friendly linear differential operators already have had their Green's functions found and studied extensively! Look them up and then have an integration party!
+
+\subsection{A little motivation...}
+
+Consider the following integral with Dirac-delta kernel, 
+\begin{equation}
+\label{delta_integral} \int_a^b f(s) \delta(x-s) ds.
+\end{equation}
+
+We know by properties of the Dirac-delta function that this integral is equal to
+$$\int_a^b f(s) \delta(x-s) ds = f(x)$$.
+
+Now recall (\ref{Greens_Def}) and substituting this into the above equation gives,
+$$\int_a^b f(s) \delta(x-s) ds = \int_a^b \hat{L} G(x,s) f(s) ds  =  f(x),$$
+
+and by (\ref{bvp_ode}), we obtain
+
+$$\hat{L}u(x) = \int_a^b \hat{L} G(x,s) f(s) ds .$$
+
+Finally by uniform convergence (and other analysis theorems, we take for granted, but never should), but moreso we simply note that $\hat{L}$ is only a differential operator on $x$, and hence can be pulled out of the integrand, e.g.,
+
+$$\hat{L}u(x) = \hat{L} \left( \int_a^b  G(x,s) f(s) \right),$$
+
+which strongly infers that we obtain our solution of
+\begin{equation}
+u(x) = \int_a^b G(x,s) f(s) ds.
+\end{equation}
+
+
+\subsection{Example: u'' + 4u = f(x) }
+
+Consider the following BVP w/ associated boundary conditions,
+
+\begin{align}
+u'' + 4u &= f(x) \\
+u(0) &= 0 \\
+u\left(  frac{\pi}{4} \right)  &= 0.
+\end{align}
+
+We now proceed in finding the Green's Function for the operator $\hat{L} = \frac{d^2}{dx^2} + 4.$ We begin by first solving the following ODE with respect to the Green's function, $G$,
+
+$$G'' + 4G = \delta(x-s),$$
+
+where we will have to consider two regions:
+\begin{enumerate}
+\item $0\leq x\leq s$
+\item $s\leq x \leq \frac{\pi}{4}$
+\end{enumerate}
+
+Now we get from simple ODE theory that
+$$G(x,s) = c_1 \cos(2x) + c_2 \sin(2x)$$
+where coefficients $c_1$ and $c_2$ will depend on $s$.
+
+Looking into the boundary conditions on each region appropriately, we see that for:
+\begin{enumerate}
+\item $x\in [0,s] : G(0,s) = 0 \Rightarrow c_1(s) = 0$
+\item $x\in [s,frac{\pi}{4}] : G\left(\frac{\pi}{4},s\right) = 0 \Rightarrow c_2(s) = 0$
+\end{enumerate}
+
+Therefore we find that 
+$$G(x,s) = \left\{ \begin{array}{c}
+c_2(s) \sin(2x)  \ \ \ \ \  x\in[0,s], \\
+c_1(s) \cos(2x) \ \ \ \ \  x\in[s,\frac{\pi}{4}].
+\end{array} \right. $$
+
+Now we must find the functional forms of $c_1(s)$ and $c_2(s)$. We will be able to do this by using the fact we need $G(x,s)$ to be continuous in \emph{both} $x$ and $s$, as well as the \emph{jump discontinuity} in the derivative of $G(x,s)$.
+
+First we will look at continuity. 
+\begin{itemize}
+\item[Continuity]: We need that $G(x,s)$ has the same limit as $x\rightarrow s$ from below and $x\rightarrow s$ from above.
+
+This gives us that
+\begin{equation}
+\label{continuity_eq1} c_2(s) \sin(2s) = c_1(s) \cos(2s).
+\end{equation}
+
+\item[Jump]:  $\lim_{\epsilon\rightarrow0} \left[ \frac{dG}{dx}\Bigg|_{s+\epsilon} -  \frac{dG}{dx}\Bigg|_{s-\epsilon}   \right] = \frac{1}{p(x)}$.
+
+We note that $p(x)$ = 1 for our toy problem. We find that
+\begin{equation}
+\label{jump_discontinuity} -2c_1(s) \sin(2s) - 2c_2(s) \cos(2s) = 1.
+\end{equation}
+
+\end{itemize}
+
+Now solving (\ref{continuity_eq1}) and (\ref{jump_discontinuity}) for $c_1(s)$ and $c_2(s)$, we find
+\begin{align}
+c_1(s) &= -\frac{1}{2}\cos(2s)  \\
+c_2(s) &= \frac{1}{2}\sin(2s),
+\end{align}
+
+and hence we find our Green's function to be:
+\begin{equation}
+\label{Green_example_sol} G(x,s) = \left\{ \begin{array}{c}
+-\frac{1}{2} \cos(2s) \sin(2x) \ \ \ \ \ x\in[0,s] \\
+-\frac{1}{2}\sin(2s) \cos(2x)  \ \ \ \ \ x\in[s,\pi].
+\end{array} \right.\\
+\end{equation}
+
+\subsubsection{Let's make sure we're on the same page, let $f(x) = 50e^{-0.3742}.$}
+
+Hence we are looking for the particular solution for the above BVP with $f(x) = 50e^{-0.3742}.$\\
+
+Recall we just need to perform,
+$$u(x) = \int_0^{\pi} G(x,s) f(s) ds.$$
+
+Therefore we see
+\begin{align}
+u(x) &= \int_0^{frac{\pi}{4}} G(x,s) f(s) ds\\
+&= \int_0^{x} G_{-}(x,s) f(s) ds + \int_x^{frac{\pi}{4}} G_{+}(x,s) f(s) ds\\
+&=  \int_0^{x} \left[-\frac{1}{2} \cos(2s) \sin(2x)\right](50e^{-0.3742}) ds + \int_x^{frac{\pi}{4}} \left[-\frac{1}{2}\sin(2s) \cos(2x)  \right] (50e^{-0.3742}) ds\\
+&= -25e^{-0.3742} \Bigg[ \sin(2x)  \int_0^{x}  \cos(2s) ds + \cos(2x) \int_x^{frac{\pi}{4}} \sin(2s) ds \Bigg]\\
+&= -25e^{-0.3742} \left[ \frac{1}{2} \sin^2(2x) + \frac{1}{2}\cos^2(2x) \right] \\
+&= -\frac{25}{2} e^{-0.3742} ( \sin^2(2x) + \cos^2(2x) )\\
+&= \frac{25}{2} e^{-0.3742} \\
+\end{align}
+
+and we find that $$u(x) = \frac{25}{2} e^{-0.3742} \cos(4x) .$$
