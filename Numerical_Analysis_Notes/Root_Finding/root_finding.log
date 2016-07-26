@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  26 JUL 2016 14:15
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  26 JUL 2016 14:23
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -753,7 +753,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 376--377
 
  []
 
-[8] [9] (./root_finding.aux)
+[8] [9] [10] (./root_finding.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -761,7 +761,7 @@ LaTeX Warning: There were multiply-defined labels.
 Here is how much of TeX's memory you used:
  4290 strings out of 493747
  59244 string characters out of 3143546
- 222179 words of memory out of 3000000
+ 223179 words of memory out of 3000000
  7473 multiletter control sequences out of 15000+200000
  133499 words of font info for 148 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
@@ -776,10 +776,10 @@ xlive/2010/texmf-dist/fonts/type1/adobe/utopia/putb8a.pfb></usr/local/texlive/2
 010/texmf-dist/fonts/type1/adobe/utopia/putbi8a.pfb></usr/local/texlive/2010/te
 xmf-dist/fonts/type1/adobe/utopia/putr8a.pfb></usr/local/texlive/2010/texmf-dis
 t/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on root_finding.pdf (9 pages, 96219 bytes).
+Output written on root_finding.pdf (10 pages, 97996 bytes).
 PDF statistics:
- 71 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
+ 74 PDF objects out of 1000 (max. 8388607)
+ 52 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -412,9 +412,19 @@ $$\alpha = x_{n+2} - \frac{  (x_{n+2}-x_{n+1})^2 }{ x_{n+2} - 2x_{n+1} + x_n } +
 
 Therefore our next iterate, $\alpha$,  is $2^{nd}$-order accurate.
 
+The other ``straight-forward" proof one can do to prove the $2^{nd}$-order accuracy bump from using Aitken's Extrapolation is by using Taylor Series, exclusively. We consider 
 
+$$x_{n+1} = H(x_n) = g(g(x_n)) - \frac{ ( g(g(x_n)) - g(x_n) )^2   }{ g(g(x_n)) - 2 g(x_n) + x_n   },$$
 
+and go through the same rigmarole as we did for Newton's Method, namely, computing 
 
+\begin{align*}
+e_{n+1} = x_{n+1} -alpha &= H(x_n) - \alpha \\ \\
+	&= H( \alpha - e_n ) - \alpha \\ \\
+	&= \left[ H(\alpha) + e_n H'(\alpha) + \frac{1}{2!} e_n^2 H''(\alpha) + \mathcal{O}(e_{n}^3)   \right] - \alpha \\ \\
+	&= e_n H'(\alpha) +  \mathcal{O}(e_{n}^3). \\ 
+\end{align*}
 
+\emph{Simply}, show that $H'(\alpha) = 0$ and the proof is in the pudding. We note, if you ever want to feel like you're doing a lot of mathematical work, but at the same time, not a lot at all, we suggest you proceed with this calculation. 
 
 \end{document}
