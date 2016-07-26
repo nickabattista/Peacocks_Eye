@@ -1211,6 +1211,52 @@ We will now briefly describe \emph{Richardson Extrapolation} in general, of whic
  
  which is higher order than our original approximation, $\tilde{F}(h)$. We also brag that in most circumstances, as in the case for \emph{Romberg Integration}, Richardson Extrapolation schemes can be \emph{boot-strapped} to achieve higher accuracy.
  
+ %
+ %
+ %
+ % ROMBERG INTEGRATION
+ %
+ %
+ %
+ \subsubsection{Romberg Integration}
+ 
+ Let's proceed in explicitly showing how boost accuracy for integration schemes using \emph{Romberg Integration}. We are going to assume we are using a Newton-Cotes method, for simplicity in choosing quadrature points, without any other fuss. 
+ 
+ We define the following integration stencil, $$I_h: \mbox{ composite method on } [A,B] \mbox{ with step, h} = \int_A^B f(x) dx = C h^k +  \mathcal{O}(h^{k+1}).$$
+ 
+ Hence the largest error term is $\mathcal{O}(h^k)$. Next we consider, $I_{h/2}$, that is, the same stencil but done in a composite scheme to break the interval into two segments with length $h/2$ each, e.g., 
+ 
+ $$I_{h/2} = \int_A^B f(x) dx + C\left( \frac{h}{2} \right)^k +  \mathcal{O}(h^{k+1}).$$
+ 
+ Now we substrate $I_{h/2}$ from $I_h$,
+ 
+ \begin{align*}
+ I_h - I_{h/2} &= Ch^k - C\left( \frac{h}{2}  \right)^k +  \mathcal{O}(h^{k+1}) \\ \\
+ 	&= Ch^k \left( 1 - \frac{1}{2^k}  \right)  +  \mathcal{O}(h^{k+1}). \\
+ \end{align*}
+ 
+ Now solving for $C$, we find that 
+ 
+ $$C = \frac{1}{h^k} \frac{ I_h - I_{h/2}   }{ 1 - \frac{1}{2^k}   } + \frac{ \mathcal{O}(h^{k+1})  }{ h^k  },$$
+ 
+ and hence
+ 
+ $$C =  \frac{1}{h^k} \frac{ I_h - I_{h/2}   }{ 1 - \frac{1}{2^k}   }  + \mathcal{O}(h),$$
+ 
+ and see that $C$ is $1^{st}$-order accurate. Now we will approximate the error,
+ 
+ $$I_h - Ch^k = I_h - \frac{  I_h - I_{h/2}   }{ 1 - \frac{1}{2^k}   }   = \int_A^B f(x) dx + D h^{k+1} + \mathcal{O}(h^{k+2}).$$
+ 
+ Therefore we see that the leading error term is $\mathcal{O}(h^{k+1})$, even though $I_h$ itself is only $\mathcal{O}(h^k).$ We have successfully boosted the accuracy by one order! For completion, let's define a new integration method, call it $\tilde{I}_h$ and define is as,
+ 
+ $$\tilde{I}_h = I_h - \frac{  I_h - I_{h/2}   }{ 1 - \frac{1}{2^k}   } = \int_A^B f(x) dx + \mathcal{O}(h^{k+1}).$$
+ 
+ This is our new integration method. However, the fun does not need to stop there! We can define another integration method, call it $\tilde{\tilde{I}}_h$, 
+ 
+ $$\tilde{\tilde{I}}_h = \tilde{I}_h -  \frac{  \tilde{I}_h - \tilde{I}_{h/2}   }{ 1 - \frac{1}{2^k}   } = \int_A^B f(x) dx + \mathcal{O}(h^{k+2}),$$
+ 
+ that has higher-order accuracy! In principle, we could continue doing this for as long as we'd like, but will stop here to save some paper.
+ 
 \end{document}
 
 
