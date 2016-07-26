@@ -65,7 +65,7 @@
 
 \author{Nick Battista} % Your name
 
-\date{\normalsize Date Created: 5/20/2014} % Today's date or a custom date
+\date{\normalsize Date Created: 5/20/2014 \\ Date Modified: 7/15/2016} % Today's date or a custom date
 
 \begin{document}
 
@@ -141,8 +141,11 @@ General recursive algorithms, have a functional form such as $x_{n+1} = g(x_n, x
 
 If $\beta$ is a fixed point of $g(x)$ then $\beta = g(\beta)$. The way we construct $g(x)$ is such that a fixed point of $g(x)$ will also be a root of $f(x)$. That would be groovy. Our root finding problem then manifests itself as finding a fixed point for $g(x)$. Is this just a new can of worms? Maybe? Sometimes? \\
 
-However, if we have chosen $g(x)$ in a logically sound manner, we see we should get convergence to our desired root by simple criteria- If $|g(\alpha)|<1$ in some neighborhood of $\alpha$, then convergence is guaranteed. In more mathy language, if $x_{n+1} = g(x_n)$ such that $g:\mathbb{R}\rightarrow\mathbb{R}$, $g(\alpha)=\alpha$, and $|g(\alpha)|<1$, then in some neighborhood of $\alpha$, e.g., if $|x-\alpha|<\epsilon$ for $\epsilon>0$, then $x_n\rightarrow\alpha$.\\
+However, if we have chosen $g(x)$ in a logically sound manner, we see we should get convergence to our desired root by simple criteria- If $|g'(\alpha)|<1$ in some neighborhood of $\alpha$, then convergence is guaranteed. In more mathy language, if $x_{n+1} = g(x_n)$ such that $g:\mathbb{R}\rightarrow\mathbb{R}$, $g(\alpha)=\alpha$, and $|g'(\alpha)|<1$, then in some neighborhood of $\alpha$, e.g., if $|x-\alpha|<\epsilon$ for $\epsilon>0$, then $x_n\rightarrow\alpha$.\\
 
+% 
+% ANALYSIS OF FIXED POINT ITERATIONS
+%
 \subsection{Analysis of Fixed Point Iterations}
 
 $ $\\
@@ -156,16 +159,16 @@ Using cute, subtle math tomfoolery, we get
 e_{n+1}&= x_{n+1} - \alpha \\
 &= g(x_n) - \alpha \\
 &=g(\alpha + e_n)  - \alpha \\
-&=[g(\alpha) + e_n g'(\alpha) + \frac{1}{2!} e_n^2 g''(\alpha) + \frac{1}{3!} e_n^3 g'''(\alpha) + ... ] - \alpha \\
+&=\left[g(\alpha) + e_n g'(\alpha) + \frac{1}{2!} e_n^2 g''(\alpha) + \frac{1}{3!} e_n^3 g'''(\alpha) + ... \right] - \alpha \\
 &= e_n g'(\alpha) + \frac{1}{2!} e_n^2 g''(\alpha) + \frac{1}{3!} e_n^3 g'''(\alpha) + ... , \\
 \end{split}					
 \end{align}
 
 since $\alpha = g(\alpha)$ by definition of our fixed point. Hence we see that 
 
-$$e_{n+1} = e_n g'(\alpha) + ... = O(e_n),$$
+$$e_{n+1} = e_n g'(\alpha) + ... = \mathcal{O}(e_n),$$
 
-and if $g'(\alpha)<1$ we get convergence to the root. Yay. Note, however, this analysis just showed that fixed point iterations (at worst) exhibit linear convergence. Nay. \\
+and if $|g'(\alpha)|<1$ we get convergence to the root. Yay. Note, however, this analysis just showed that fixed point iterations (at worst) exhibit linear convergence. Nay. \\
 
 %------------------------------------------------
 %
@@ -196,6 +199,9 @@ $$x_{n+1} = x_n - \frac{ f(x_n) }{ f'(x_n) }.$$\\
 
 The other way, for those geometrically minded, to derive Newton's is to pick an initial guess, say $x_n$, and to approximate the function,$f(x)$, using a tangent line at $x_n$. Finding the zero of that tangent line is what we call the next guess for the root of $f(x)$.\\
 
+%
+% NEWTON'S CONVERGENCE ANALYSIS
+%
 \subsection{Newton's Convergence Analysis}
 
 Since Newton's Method is an example of a fixed point iteration, we can use the same kind of Taylor series analysis to find its convergence order. Recall for Newton's, \\
@@ -211,7 +217,7 @@ Again doing some cute mathematical slight of hand, we get\\
 e_{n+1}&= x_{n+1} - \alpha \\
 &= g(x_n) - \alpha \\
 &=g(\alpha + e_n)  - \alpha \\
-&=[g(\alpha) + e_n g'(\alpha) + \frac{1}{2!} e_n^2 g''(\alpha) + \frac{1}{3!} e_n^3 g'''(\alpha) + ... ] - \alpha \\
+&=\left[g(\alpha) + e_n g'(\alpha) + \frac{1}{2!} e_n^2 g''(\alpha) + \frac{1}{3!} e_n^3 g'''(\alpha) + ... \right] - \alpha \\
 \end{split}					
 \end{align}\\
 
@@ -223,7 +229,7 @@ Now we see that $g'(\alpha)=0,$ i.e.,\\
 
 $$g'(\alpha) = \frac{d}{dx}\Bigg|_{x=\alpha} = \frac{d}{dx} \left( x - \frac{ f(x) }{ f'(x) } \right)\Bigg|_{x=\alpha} = \frac{ f(x) f''(x) }{ f'(x)^2 } \Bigg|_{x=\alpha} = \frac{ f(\alpha) f''(\alpha) }{ f(\alpha)^2 } = 0,$$\\
 
-which shows Newton's method exhibits $2^{nd}$ order convergence to the root, i.e., $$e_{n+1} = O(e_n^2).$$ Note we see above why $f(x)$ needs to be at least $C^2$ otherwise, the statement above has no meaning. Also, we find that if $\alpha$ is not a single root that the above analysis does not imply $2^{nd}$ order convergence. \\
+which shows Newton's method exhibits $2^{nd}$ order convergence to the root, i.e., $$e_{n+1} = \mathcal{O}(e_n^2).$$ Note we see above why $f(x)$ needs to be at least $C^2$ otherwise, the statement above has no meaning. Also, we find that if $\alpha$ is not a single root that the above analysis does not imply $2^{nd}$ order convergence. \\
 
 \subsection{What can go wrong with Newton's?}
 
@@ -255,7 +261,7 @@ Now Newton has a kid sister, the \emph{Secant Method}. The essence of the Secant
 
 Thinking geometrically, Secant's story begins with two guesses to the root. Rather than forming any tangent lines, as in Newton's case, Secant very cleverly forms a secant line between the two guesses. Analytically, we find the zero of that secant line and that root is our next guess, i.e, \\
 
-Consider two points, $x_n$ and $x_{n-1}$, with respective function values $f(x_n)$ and $f(x_{n-12})$. The equation of the secant line between the points is
+Consider two points, $x_n$ and $x_{n-1}$, with respective function values $f(x_n)$ and $f(x_{n-1})$. The equation of the secant line between the points is
 
 $$y(x) = \frac{ f(x_n) - f(x_{n-1}) }{ x_n - x_{n-1} } (x - x_{n}) + f(x_1).$$
 
@@ -302,7 +308,7 @@ x_{n+2}=g(x_{n+1}) & \ e_{n+2}=x_{n+2}-\alpha \\
 
 Remember since the fixed point scheme only showed linear convergence we have,
 
-$$e_{n+1} = e_n g'(\alpha) + O(e_n^2) + ... = C e_n + O(e_n^2),$$
+$$e_{n+1} = e_n g'(\alpha) + \mathcal{O}(e_n^2) + ... = C e_n + \mathcal{O}(e_n^2),$$
 
 From above we see that, \\
 
@@ -352,8 +358,63 @@ $$x_{n+1} = H(x_n) = g(g(x_n)) - \frac{ ( g(g(x_n)) - g(x_n) )^2   }{ g(g(x_n)) 
 
 where $g(x)$ is the original $1^{st}$ order fixed point scheme.
 
+
+%
+%
+% PROOF AITKEN IS 2ND ORDER
+%
+%
 \subsection{Proof Aitken Extrapolation is $2^{nd}$ Order}
 
-Coming soon...
+There are two ways to go about this - the fun way, and the \emph{more} fun way. I'll briefly discuss both ways, but we will only perform the first method...no one should have too much excitement, after all. The less fun method involves a calculation similar to the derivation of Aitken's Extrapolation itself; however, we will hold onto all the error terms and see how they change throughout the computation.
+
+Recall in the derivation we had for a standard first order scheme, that
+\begin{align} 
+e_{n+1}&= e_n g'(\alpha) + \frac{1}{2!} e_n^2 g''(\alpha) + \mathcal{O}(e_n^3) = C e_n  + D e_n^2 + \mathcal{O}(e_n^3)  \\ \\
+\label{aitken_proof1}
+e_{n+2}&= e_{n+1} g'(\alpha) +  \frac{1}{2!} e_{n+1}^2 g''(\alpha) + \mathcal{O}(e_{n+1}^3) = C e_{n+1}  + D e_{n+1}^2 + \mathcal{O}(e_{n+1}^3) \\
+\end{align}\\
+
+where $C=g'(\alpha)\neq 0$ and $D= \frac{1}{2!} g''(\alpha).$ Upon substituting the above two equations, we find
+
+$$e_{n+2}-e_{n+1} = C(e_{n+1}-e_n) + D( e_{n+1}^2 - e_n^2 ) +  \mathcal{O}(e_{n}^3),$$
+
+since $\left|e_{n+1}\right| <  \left|e_{n}\right|.$
+
+Now substituting $e_{n+2}=x_{n+2}-\alpha$, $e_{n+1}=x_{n+1}-\alpha$, and $e_n=x_n-\alpha$, we get
+
+\begin{align*}
+x_{n+2}-x_{n+1} &= C(x_{n+1}-x_{n}) +D(x_{n+1}-x_n)(e_{n+1}+e_{n}) + \mathcal{O}(e_{n}^3) \\
+	&= C(x_{n+1}-x_{n}) +D(x_{n+1}-x_n)\mathcal{O}(e_{n}) + \mathcal{O}(e_{n}^3),
+\end{align*}
+
+since $e_{n+1}-e_{n} = \mathcal{O}(e_{n})$. Now solving the above for $C$, we obtain
+
+\begin{equation}
+\label{C_aitken}C = \frac{ x_{n+2}-x_{n+1}  }{ x_{n+1} - x_n } + \mathcal{O}(e_{n}).
+\end{equation}
+
+We find that $C$ is only $1^{st}$-order accurate, but will that be enough to to make the next iterate, $2^{nd}$-order accurate? Let's check it out. Substitute (\ref{C_aitken}) into (\ref{aitken_proof1}), we find that
+
+\begin{align*}
+e_{n+2} = x_{n+2} - \alpha &= C(x_{n+1}-\alpha) + \mathcal{O}(e_{n}^2) \\ \\
+	&= \left[ \frac{x_{n+2}-x_{n+1} }{ x_{n+1} - x_n } + \mathcal{O}(e_{n})    \right]( x_{n+1} - \alpha ) + \mathcal{O}(e_{n}^2) \ \ \ \mbox{ where } \ \ K = \frac{x_{n+2}-x_{n+1} }{ x_{n+1} - x_n }  \\ \\
+	&= K(x_{n+1} - \alpha) + \mathcal{O}(e_{n})\mathcal{O}(e_{n+1}) + \mathcal{O}(e_{n}^2),\ \ \ \ \ \ \ \  \ \ \ \mbox{ since } \ \ e_{n+1} = x_{n+1}-\alpha \\ \\
+	&= K(x_{n+1} - \alpha) + \mathcal{O}(e_{n}^2),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{ as }\ \ \ \	 \mathcal{O}(e_{n})\mathcal{O}(e_{n+1}) \leq \mathcal{O}(e_{n}^2).	
+\end{align*}
+
+Solving for $\alpha$, we find 
+$$\alpha = \frac{  x_{n+2} - Kx_{n+1} }{ 1 - K } +  \mathcal{O}(e_{n}^2),$$
+
+and hence
+
+$$\alpha = x_{n+2} - \frac{  (x_{n+2}-x_{n+1})^2 }{ x_{n+2} - 2x_{n+1} + x_n } + \mathcal{O}(e_{n}^2).$$
+
+Therefore our next iterate, $\alpha$,  is $2^{nd}$-order accurate.
+
+
+
+
+
 
 \end{document}
