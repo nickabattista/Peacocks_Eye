@@ -146,7 +146,7 @@ k_4 &= h f(t_n+h, y_n+k_3)
 \end{split}	
 \end{align}
 
-	The RK4 method is arguably the most popular ODE numerical scheme that is used. Although it is not usually used employed in an \emph{adaptive} scheme, meaning the step-size $h$ changes appropriately as the solver time-steps, to preserve the desired amount of accuracy as the solution moves forward in time, without having to use the worst case scenario $h$ in that region, i.e., for regions where the solution is more singular than others you'd expect $h$ to be very tiny, while regions where the solution is extremely smooth you could expect to use a larger $h$ and get desired accuracy. Oh, and also this cute little method has $4^{th}$ accuracy.
+	The RK4 method is arguably the most popular ODE numerical scheme that is used. It is usually employed as an \emph{adaptive} scheme, meaning the step-size $h$ changes appropriately as the solver computes more time-steps. The idea is to preserve the desired amount of accuracy as the solution moves forward in time, without having to use the worst case scenario $h$ in that region, i.e., for regions where the solution is more singular than others you'd expect $h$ to be very tiny, while regions where the solution is extremely smooth you could expect to use a larger $h$ and get desired accuracy. Oh, and also this cute little method has $4^{th}$ accuracy.
 
 \end{itemize}
 
@@ -277,9 +277,52 @@ c_{j} &= \sum_{m=1}^{j-1} d_{jm}. \\
 
 By matching coefficients with those of a Taylor series of desired order, say $N$, we can find all necessary coefficients above for a method with desired truncation error, $O(h^N)$.\\
 
+Let's do an example to illustrate this. 
+
+
 Note, compared to multi-step methods, the Runge-Kutta method has an easy test for \emph{consistency}. It's actually given by the bottom equation above, if $c_{j} = \sum_{m=1}^{j-1} d_{jm}$ the method is consistent.
 
-It's time to briefly chat about stability. For Runge-Kutta methods, we'll consider the concept of \emph{B-stability}. Consider 3 matrices, $B,M$ and $Q$. Let 
+\subsubsection{Derivation of RK2}
+
+In this section we wish to derive the standard $RK2$ scheme mentioned prior, e.g., 
+
+\begin{equation}
+\label{RK2} y_{n+1} = y_n + \frac{h}{2} f(t,y) + \frac{h}{2} f(t+h,y+hf(t,y)),
+\end{equation}
+
+to solve the problem of $y'=f(t,y)$ with $y(0)=y_0.$
+
+To do this, we must remember our multivariate Taylor Series old friend. Consider $f(t,y)$ to be a $C^{\infty}$ function, with $h,k$ being sufficiently small parameters defined by an open interval around $\textbf{x}=(t,y)$, i.e., $|t-a|<h$ and $|y-b|<k$, where the Taylor Series is centered around some point $\textbf{c}=(a,b)$, then we can write
+
+$$f(\textbf{x}) = f(\textbf{c}) + \big[ (\textbf{x}-\textbf{c})\cdot \nabla f(\textbf{c}) \big] + \big[  (\textbf{x}-\textbf{c})\cdot H(\textbf{x}) \cdot (\textbf{x}-\textbf{c})  \big] + \dots,$$
+
+or
+
+$$f(t+h,y+k) = f(t,y) + hf_t(t,y) + kf_y(t,y) + \frac{h^2}{2!}f_{tt} + khf_{ty} + \frac{k^2}{2!}f_yy(t,y) + \ldots.$$
+
+Now we look at the Taylor Series form of $y(t+h)$, 
+
+\begin{align*}
+y(t+h) &= y(t) + hy'(t) + \frac{h^2}{2!} y''(t) + \mathcal{O}(h^3) \ \ \ \ \ \mbox{ now substitute } y'(t)=f(t,y)\ \mbox{ and } \ y''(t) = \frac{d}{dt} f(t,y) \\ \\
+	&= y(t) + hf(t,y) + \frac{h^2}{2}  \frac{d}{dt} f(t,y) + \mathcal{O}(h^3) \\ \\
+	&= y(t) + hf(t,y) + \frac{h^2}{2} \big[ f_t(t,y) + f_y(t,y)f(t,y) \big] + \mathcal{O}(h^3) \\ \\
+	&= y(t) + \frac{h}{2}f(t,y) + \frac{h}{2} \big[  f(t,y) + hf_t(t,y) + h f_y(t,y) f(t,y) \big] +  \mathcal{O}(h^3) \\ \\
+	&= y(t) + \frac{h}{2}f(t,y) + \frac{h}{2} f(t+h,y+hf(t,y)) + + \mathcal{O}(h^3) \\ \\
+	&= y(t) + \frac{h}{2} K_1 + \frac{h}{2} K_2. \\ 
+\end{align*}
+
+And therefore upon the usual discretization shenanigans,
+
+$$y_{n+1} = y_n + \frac{h}{2} \big( K_1 + K_2 \big),$$
+
+where $K_1 = f(t,y)$ and $K_2 = f(t+h,y+hf(t,y)).$ Thus we have derived the $RK2$ numerical scheme. Deriving the $RK$ methods typically will have this sort of flavor, where you expand a Taylor Series, and continually remove terms by the adding additional terms to cancel higher and higher order terms from the series. Here we only concerned ourselves with removing terms up to $\mathcal{O}(h^2),$ but in principle could aim our sights higher. 
+
+%
+% RK - STABILITY
+%
+
+\subsubsection{RK and Stability}
+It's time to briefly chat about stability. For Runge-Kutta methods, we'll consider the concept of \emph{B-stability}. Consider 3 matrices, $A,M$ and $Q$. Let 
 \begin{align}
 \nonumber
 \begin{split}
@@ -292,5 +335,10 @@ Q &= AD^{-1} +D^{-T} A-D^{-T} {\bf{aa^{T}}} D^{-1}.\\
 \end{align}
 
 If matrices $A$ and $Q$ are non-negative definite, then the Runge-Kutta scheme is said to be \emph{B-stable}. Note If matrices $A$ and $M$ are both non-negative definite, then the method is said to be \emph{algebraically stable}.
+
+
+
+
+
 
 \end{document}

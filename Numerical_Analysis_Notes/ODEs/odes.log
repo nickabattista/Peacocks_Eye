@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  25 JUL 2016 12:28
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  27 JUL 2016 15:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -633,30 +633,32 @@ Underfull \hbox (badness 10000) in paragraph at lines 278--279
 
  []
 
-LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <8.3> not available
-(Font)              Font shape `T1/futs/b/n' tried instead on input line 292.
-LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <6> not available
-(Font)              Font shape `T1/futs/b/n' tried instead on input line 292.
-[7] (./odes.aux) ) 
+[7]
+Overfull \hbox (11.50409pt too wide) in paragraph at lines 312--312
+[] 
+ []
+
+[8] [9] (./odes.aux) ) 
 Here is how much of TeX's memory you used:
- 4241 strings out of 493747
- 58450 string characters out of 3143546
+ 4242 strings out of 493747
+ 58455 string characters out of 3143546
  230179 words of memory out of 3000000
- 7429 multiletter control sequences out of 15000+200000
+ 7430 multiletter control sequences out of 15000+200000
  109407 words of font info for 120 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 35i,16n,43p,678b,264s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/local/texlive/2010/texmf-dist/fonts/enc/dvips/base/8r.e
-nc}</usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-mex.p
-fb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-mlit.
-pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-ms.p
-fb></usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putb8a.pfb></us
-r/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb></usr/local
-/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on odes.pdf (7 pages, 83449 bytes).
+ 35i,16n,43p,686b,264s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/local/texlive/2010/texmf-dist/fonts/enc/dvips/base/
+8r.enc}</usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-m
+cl.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-m
+ex.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-m
+lit.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-
+ms.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putb8a.pfb>
+</usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb></usr/l
+ocal/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
+Output written on odes.pdf (9 pages, 90919 bytes).
 PDF statistics:
- 53 PDF objects out of 1000 (max. 8388607)
- 37 compressed objects within 1 object stream
+ 63 PDF objects out of 1000 (max. 8388607)
+ 44 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
