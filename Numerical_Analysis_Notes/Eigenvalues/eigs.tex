@@ -1,0 +1,212 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+\usepackage{algpseudocode}
+
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\sign}{sign}
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+%\setlength{\headheight}{13.6pt} % Customize the height of the header
+\setlength{\headheight}{2.6pt} % Customize the height of the header
+
+\newtheorem{theorem}{Theorem}
+%\newtheorem{proof}{Proof}
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+\textsc{Scientific Computation Comp. Review} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{1pt} \\[0.05cm] % Thin top horizontal rule
+\huge Topic: Eigenvalues \\ % The assignment title
+\horrule{1pt} \\[0.05cm] % Thick bottom horizontal rule
+}
+
+\author{Nick Battista} % Your name
+
+\date{\normalsize Date Created: 6/25/2014 \\ Date Modified: 7/27/16} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%
+%	Introduce the problem / Eigenvalue background
+%
+%----------------------------------------------------------------------------------------
+
+\section{Remember eigenvalues?}
+
+Remember how much fun calculating eigenvalues using paper and pencil was in undergraduate Linear Algebra? There was computing determinants of matrices symbollically, forming a characteristic polynomial only to find it roots, and solving some singular systems of equations. Everything that should translate swimmingly to numerically finding eigenvalues, right? Literally, none of those things are exceedingly computer friendly.\\
+
+The process of finding eigenvalues on a computer is going to have a very different feel and approach, than how one finds them by hand. Before we dive into the abstract details, we will first flat out state that numerically computing eigenvalues tends to be a messy business. Unlike solving systems of equations (which also have a very much more natural transition from pencil and paper to the \emph{in silica} implementations), we will not be able to state \emph{a priori} the computational cost of finding eigenvalues. \\
+
+We will not be able to say the explicit cost of finding eigenvalues; however, will only be able to approximate the number of operations required. This is all to say, \emph{numerical eigenvalue solvers need must be iterative}. We can easily observe this since at the heart of each eigenvalue problem lies a characteristic polynomial, to which we must  find its roots, and finding roots of equations is an iterative process. Whatever our method, it will require an iterative flavor, and hence will introduce errors, outside of round-off errors. \\
+
+Before we dive right into the numerical side of things, we will first refresh a bunch of eigenvalue identities, i.e., factorizations, properties, among other things, which we will put into our numerical eigenvalue toolbox. \\
+
+
+%----------------------------------------------------------------------------------------
+%
+%	Eigenvalue Identities, etc
+%
+%----------------------------------------------------------------------------------------
+
+\section{Eigenvalue Toolbox}
+
+This section will more or less be a list of eigenvalue identities, definitions, factorizations, and everything that is good$\ldots$in the eigen-world. Hopefully this looks familiar, if not, please indulge me, and peruse this section with a smile. \\
+
+
+%
+% EIGENVALUE Definitions
+%
+\subsection{Some eigen-related definitions to keep around for a rainy day...}
+
+Here it goes$\ldots$let's go out and define!
+
+\begin{enumerate}
+\item $\lambda$ is an eigenvalue $\leftrightarrow$ there exists \textbf{x} such that $\lambda\textbf{x}-A\textbf{x}=0 \leftrightarrow \lambda I-A$ is \emph{singular} $\leftrightarrow \det(\lambda I - A)=0$.
+%
+\item \emph{Definition:} The \emph{geometric multiplicity} of an eigenvalue, $\lambda$, is the dimension of the nullspace of $\lambda I - A$, i.e., $\null(\lambda I - A)$. In short, it is the number of eigenvectors associated with one particular eigenvalue, $\lambda$.
+
+\item \emph{Definition:} The \emph{algebraic multiplicity} of an eigenvalue, $\lambda$, of a matrix $A$, is the the multiplicity of $\lambda$ as a root of the characteristic polynomial, e.g., $p_A(\lambda) = \det(\lambda I - A) = 0$ Furthermore, note that the above two definitions imply that $$\mbox{ algebraic mult. } \geq \mbox{ geometric mult. }.$$
+
+\item \emph{Definition:} A matrix, $A$, is said to be \emph{defective} when the algebraic multiplicity is strictly greater than the geometric multiplicity, that is, not enough linearly independent eigenvectors exist for a particular eigenvalue. \emph{Spoiler}, we will not be able to factorize $A$ into an eigenvalue decomposition, if $A$ is defective. On that note, I'll also drop here that all eigenvectors are linearly independent, so if $A$ is full rank, e.g., $\null(A)=\{ \}$, then the eigen-space of $A$ spans the same space as $A$. Stronger than that, though, we can say that the eigen-space of $A$ spans the same space as $A$.
+
+\item \emph{Definition:} The determinant of a matrix $A$ can be written as a product of its eigenvalues, e.g., $$\det(A) = \prod_{k=1}^n \lambda_k.$$
+
+\item \emph{Definition:} Similarly, the \emph{trace} of a matrix $A$ can be written as a sum of its eigenvalues, e.g., $$\tr(A) = \sum_{k=1}^n \lambda_k.$$ We note the above two definitions may be useful in some applications, but we will not harness them, often, if at all in everyday life. It's best to keep them around in the toolbox, though. 
+
+\end{enumerate}
+
+
+%
+% EIGENVALUE FACTORIZATIONS%
+\subsection{Eigenvalue Decompositions: the big guns}
+
+If the above subsection was nails, screws, and bolts of eigenvalue problems, then this section we learn about the power tools. Matrix factorizations are very useful, as demonstrated when solving linear systems. We will restrict our discussion here to solely eigenvalue-type factorizations, e.g., eigenvalue decompositions. We will mention three different eigenvalue decompositions. \\
+
+\begin{enumerate}
+
+\item \emph{Diagonalization}: We can write $A$ as a product of three matrices,  $$A=X\Lambda X^{-1}.$$ if and only A is \emph{non-defective}, meaning all of $A$'s algebraic multiplicities $=$ geometric multiplicities. The matrix $X$ is composed of eigenvectors in their column form. The matrix $\Lambda$ is a diagonal matrix, where it's diagonal is composed of the eigenvalues of $A$. We note if $\Lambda_{11}=\lambda_1$, then the first column of $X$ is the eigenvector associated with $\lambda_1$, and so on. \\
+
+You are probably familiar with this eigenvalue decomposition from undergraduate Linear Algebra and for this, I apologize. 
+
+\item If $A\in\mathbb{R}^{n\times n}$ and has $n$ orthogonal eigenvectors, then $A$ has a \emph{unitary diagonalization}, and we can write $$A = Q\Lambda Q^{*}.$$ Similarly to matrix $X$ above, $Q$ is a matrix, whose columns are all the eigenvectors of $A$; however, in this case they are orthonormal, hence we have $QQ^{*}=Q^{*}Q=I$. Furthermore, the matrix $\Lambda$ is a diagonal matrix, which contains the eigenvalues on the diagonal. \\
+
+We will note a few things. 
+
+\begin{itemize}
+\item This counts as both an eigenvalue decomposition and SVD, i.e., $$A=Q\Lambda Q^{*}=U\sum V^{-1},$$
+where we let $U=Q$, $\sum = \Lambda$, and $V^{-1} = \sign(\Lambda)Q^{*}.$
+%
+\item Hermitian matrices, i.e., $A=A^{*}$, are unitary diagonalizable; e.g., all of their eigenvectors are orthogonal (orthonormal) and eigenvalues are real-valued!  Let's prove these claims!
+%
+\begin{proof} We will now prove that all eigenvalues are real and that their associated eigenvectors are orthogonal. 
+\begin{enumerate}
+%PROOF E-VALs are REAL
+\item First we will prove that all the eigenvalues of a Hermitian matrix are real. To do this we will recall the infamous eigenvalue equation, $$A\textbf{x}=\lambda\textbf{x}.$$ To isolate $\lambda$ by itself we multiply both sides by $\textbf{x}^{*}$, and solve for $\lambda$, e.g., $$\lambda = \frac{ \textbf{x}^{*} A \textbf{x}    }{  \textbf{x}^{*} \textbf{x}   }.$$
+Now we are ready for the final step, ,
+$$\lambda^{*} = \left( \frac{ \textbf{x}^{*} A \textbf{x}    }{  \textbf{x}^{*} \textbf{x}   } \right)^{*}  = \frac{ \textbf{x}^{*} A^{*} \textbf{x}    }{  \textbf{x}^{*} \textbf{x}   } =  \frac{ \textbf{x}^{*} A \textbf{x}    }{  \textbf{x}^{*} \textbf{x}   } = \lambda,$$ and hence $\lambda\in\mathbb{R}.$
+
+%PROOF E-VECs are Orthogonal
+\item We now will prove all the eigenvectors are orthogonal. Assume that$\lambda$ and $\mu$ are distinct eigenvalues associated eigenvectors $\textbf{x}$ and $\textbf{y}$, respectively. Hence we will now show that $<\textbf{x},\textbf{y}>=0$
+
+To begin we consider, $$\lambda<\textbf{x},\textbf{y}> = <\lambda\textbf{x},\textbf{y}> = <A\textbf{x},\textbf{y}>.$$
+
+Now using properties of inner products, we can write $$<A\textbf{x},\textbf{y}> = <\textbf{x},A^{*}\textbf{y}>.$$
+
+However, since $A=A^{*}$, we get
+
+$$<\textbf{x},A^{*}\textbf{y}> = <\textbf{x},A\textbf{y} > = <\textbf{x},\mu\textbf{y}>$$
+
+Using another property of inner products, we can pull out a scalar by 
+$$<\textbf{x},\mu\textbf{y}> = \mu^{*}<\textbf{x},\textbf{y}> = \mu <\textbf{x},\textbf{y}>.$$
+
+Hence we have $$ \lambda <\textbf{x},\textbf{y}> =  \mu <\textbf{x},\textbf{y}>,$$ but since we assumed $\mu\neq\lambda$, this implies that $<\textbf{x},\textbf{y}>=0.$\\ 
+
+I have to admit this is a more long winded way to show this property of Hermitian matrices. Since we are assuming $A$ is full rank, we can diagonalize $A$, e.g., let $$A=X\Lambda X^{-1},$$
+
+and now since $A=A^{*}$, we have $$A^{*} = ( X\Lambda X^{-1})^{*} = (X^{-1})^{*} \Lambda^{*} X^{*} = ( X\Lambda X^{-1})^{*} = (X^{-1})^{*} \Lambda X^{*},$$
+
+since all the eigenvalues are real. However this must be equal to the original diagonalization of $A$ because $A$ is Hermitian. Therefore we have that $$X=(X^{-1})^{*} \ \ \ \mbox{ and } \ \ \ X^{-1} = X^{*}.$$
+
+The only way this above statement could be true is if $X^{*}=X^{-1}$, which makes $X$ an orthogonal matrix, and our result falls out. 
+
+\end{enumerate}
+\end{proof}
+
+In fact, we can extend this to all matrices that are normal! \\
+\begin{theorem} A matrix is unitary diagonalizable if and only if it is normal. \end{theorem}  Recall that a matrix, $A$, is \emph{normal} if $AA^{*} = A^{*}A$.
+\end{itemize}
+
+
+%Schur Factorization
+\item Regardless of the spectral properties of $A$, we can write it in its Schur form. The Schur form of a matrix is where A is decomposed as, $$A=QTQ^{*}.$$ where $Q$ is an orthogonal matrix and $T$ is an upper-triangular matrix. Please note that $Q$ is not, in general, composed of eigenvectors, as in the unitary diagonalization case. Moreover, upper-triangular matrix $T$ is in the \emph{Jordan form}, but still maintains all the eigenvalues of $A$ along its main diagonal. This is because $A$ and $T$ are \emph{similar}. We now define what that means.
+
+\begin{itemize}
+\item \emph{Definition}: Two matrices, $A$ and $B$, are similar if and only if there exists non-singular matrix $P$, such that we can write $A=PBP^{-1}.$ Furthermore if two matrices are similar, then they have the same eigenvalues. A clear example of this is the diagonalization of a matrix. 
+\end{itemize}
+
+Moreover, because of the \emph{Jordan form} of $T$, every matrix has a Schur Factorization. That's important enough to write as a theorem, give me a second. 
+
+\begin{theorem} Every square matrix has a Schur Factorization.
+\end{theorem}
+
+Boom. Why is this so important? Well as we approach numerically finding eigenvalues, we will almost exclusively use the Schur Factorization. The only time we won't, is typically when $A$ is Hermitian, and we see the Schur Factorization becomes a Unitary Diagonalization of  $A$, that is, $T$ is diagonal. Also, whenever we have orthogonal matrices involved, computations tend to have nice stability properties, from the backward stability of how one will compute $Q$, i.e., using Householder Reflectors or Givens Rotations. 
+
+
+\end{enumerate}
+
+
+
+
+
+\end{document} %%%ENDS DOCUMENT
