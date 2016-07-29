@@ -294,6 +294,8 @@ Therefore $r(x)$ is minimized when \textbf{x} is an eigenvector and $r(\textbf{x
 %
 \subsubsection{Proof $RQ$ is Quadratically Accurate}
 
+\begin{proof}
+
 To begin this proof, we will assume that $\{ \textbf{v}_j \}$ are the true eigenvectors and $\textbf{x}$ is our approximated eigenvector. We can expand \textbf{x} in terms of the eigenvector basis, $$\textbf{x} = \sum_j a_j \textbf{v}_j.$$
 
 Now we begin. Where we are going, we don't need roads, I mean we will assume that if \textbf{x} is sufficiently close to the eigenvector $\textbf{v}_P$, then we have $\left| \frac{a_k}{a_P}  \right| < \epsilon$ for all $k\neq P$. Before we use this fact, we must first do some computations. Let's begin with $RQ$,
@@ -325,6 +327,8 @@ Using one of our favorite Taylor Series, $\frac{1}{1+x} = 1-x+x^2-x^3+\ldots$, s
 	%
 	&\approx \mathcal{O}(\epsilon^2). \\
 \end{align*}
+
+\end{proof}
 
 Hence we find that $r(\textbf{x}) - \lambda_P = \mathcal{O}(\epsilon^2).$ Welp, now that we know how accurate $RQ$ is, let's dive into some methods that produce approximate eigenvectors so we can put the $RQ$ to use! We will introduce the Power Method, followed closely behind by it's cousin, the Inverse Power Iteration. 
 
@@ -371,6 +375,8 @@ Before we get to that algorithm, we will discuss the convergence of the Power Me
 
  Here we will show that the convergence of the Power Method to the dominant eigenvector is $$\left|\left| \textbf{x}^{(k)} - (\pm \textbf{v}_1) \right| \right| = \mathcal{O}\left( \left| \frac{\lambda_2}{\lambda_1}  \right|^k  \right).$$
  
+ \begin{proof}
+ 
 We will begin with $\textbf{x}^{(k)} - (\pm \textbf{v}_1)$ and massage it until we get our result. Let's take a look.
 \begin{align*}
 \textbf{x}^{(k)} - (\pm \textbf{v}_1) &= c_k \left( \sum_{j=1}^N a_j \lambda_j^k \textbf{v}_j \right) - (\pm \textbf{v}_1) \\ \\
@@ -386,6 +392,8 @@ and the largest error term will be from the $j=2$ term, and hence we obtain the 
 
 $$\left|\left| \textbf{x}^{(k)} - (\pm \textbf{v}_1) \right| \right| = \mathcal{O}\left( \left| \frac{\lambda_2}{\lambda_1}  \right|^k  \right).$$
 
+\end{proof}
+
 Welp, we got the result, although the convergence is only linear, but hey, it still converges! Not too bad for such a simple algorithm. What does this mean for the convergence its associated eigenvalue? 
 
 %
@@ -395,6 +403,8 @@ Welp, we got the result, although the convergence is only linear, but hey, it st
 
 We will show that using the Power Method for finding the dominant eigenvalue converges as, $$\left|\left| r(\textbf{x}^{(k)} - \lambda_1 \right|\right| = \mathcal{O}\left( \epsilon^{2k} \right).$$
 
+\begin{proof}
+
 This is a rather simple proof, in which we will just simply use our previous results for the accuracy of the $RQ$ and the convergence of the Power Method to the dominant eigenvector. First from the accuracy of the $RQ$ we get 
 
 $$r(\textbf{x}^{(k)} - r(\textbf{v}_1) =  \mathcal{O}\left(\epsilon^k\right),$$
@@ -402,5 +412,80 @@ $$r(\textbf{x}^{(k)} - r(\textbf{v}_1) =  \mathcal{O}\left(\epsilon^k\right),$$
 and hence $$r(\textbf{x}^{(k)} - r(\textbf{v}_1) = \mathcal{O}\left( \left|\left| \textbf{x}^{(k)} - \textbf{v}_1   \right|\right|^2  \right).$$
 
 Now using the convergence of the Power Method to dominant eigenvector, we find that $$r(\textbf{x}^{(k)} - r(\textbf{v}_1) = \mathcal{O}\left( \left|\left| \textbf{x}^{(k)} - \textbf{v}_1   \right|\right|^2  \right) = \mathcal{O}\left( \left( \epsilon^k \right) ^2 \right) = \mathcal{O}\left( \epsilon^{2k}  \right).$$
+
+\end{proof}
+
+Now that we have beat the Power Method to death, and it can only give us the dominant eigenvector approximation, let's set our sights a bit higher$\ldots$finding any eigenvector we want, by guessing different eigenvalue approximations. Yup, it's time for the \emph{Inverse Power Iteration}!
+
+
+%------------------------------------------------------------------------
+%
+% INVERSE POWER ITERATION
+%
+%------------------------------------------------------------------------
+
+\subsection{Inverse Power Iteration}
+
+The idea with \emph{Inverse Power Iteration}, $IPI$, is that if we have background knowledge of what the spectrum of $A$ looks like, we will be able to use that information to pull out what the exact eigenvalues, well eigenvectors, are. We will do this by introducing shifts, $\mu$, into the Power Method. However, rather than apply perform the Power Method by continually multiplying $A$ onto an initial guess, we will continually multiply the matrix $(A-\mu I)^{-1}$.\\
+
+The reason for this comes from relations between this shifted matrix, $(A-\mu I)^{-1}$ and $A$. We note two things, 
+\begin{enumerate}
+\item The eigenvectors of $(A-\mu I)^{-1}$  are the same as $A$'s except they have eigenvalues $\left\{ \frac{1}{\lambda_j-\mu } \right\}$, rather than $\{ \lambda_j \}$.
+\item If $\mu$ is close to $\lambda_j$, then $\frac{1}{\lambda_j-\mu} >> \frac{1}{\lambda_k -\mu}$ for $k\neq j$.
+\end{enumerate}
+
+We can easily see the first of the above statements is true, i.e., 
+\begin{proof}
+We begin with the eigenvalue equation and go from there,
+$$A\textbf{v} = \lambda \textbf{v}.$$
+Now subtract $\mu I$ from both sides, 
+$$(A-\mu I) \textbf{v} = (\lambda-\mu) \textbf{v}.$$
+Finally we just need to multiply both sides by $(A-\mu I)^{-1}$ and divide both sides by $(\lambda-\mu)$, to get
+$$(A-\mu I)^{-1} \textbf{v} = \left( \frac{1}{\lambda-\mu} \right) \textbf{v}.$$
+Hence we see that $A$ and $(A-\mu I)^{-1}$ have the same eigenvectors, and the eigenvalues of $(A-\mu I)^{-1}$ are $\left\{ \frac{1}{\lambda_j-\mu } \right\}$.
+\end{proof}
+
+Similar to the Power Method, the convergence of the $IPI$ is only linear. Furthermore, the algorithm looks awfully similar to that of the Power Method; however, each step is going to require solving a linear system, now
+
+\begin{align*}
+\textbf{x}^{(0)} &\mbox{ s.t. } \left|\left|v^{(0)}\right|\right| = 1 \\ 
+\mbox{for } &k=1,2,\ldots \\
+\ \ \ \ &\ \mbox{\emph{Solve}}: \bigg(A-\mu I\bigg)\textbf{w} = \textbf{x}^{(k-1)} \\
+\ \ \ \ &\ \textbf{x}^{(k)} = \frac{ \textbf{w} } { \left|\left| \textbf{w} \right|\right| } \\
+\ \ \ \ &\lambda^{(k)} = \bigg( \textbf{x}^{(k)} \bigg)^{*} A \textbf{x}^{(k)} \\
+\end{align*}
+
+One question you may be asking yourself is, if we're computing $\lambda^{(k)}$ each iteration with the $RQ$, why aren't we using that information anywhere? Also, does the shift, $\mu$, need to stay the same as the computation progresses? The answer is, lets use the extra information to update our shift each iteration! This should cause the algorithm to converge faster, too (and it does!)!\\
+
+This process is now called the \emph{Rayleigh Quotient Iteration}!
+
+\subsubsection{Rayleigh Quotient Iteration}
+
+The \emph{Rayleigh Quotient Iteration} is virtually the same as the Inverse Power Iteration, except each iteration with update the shift with $\mu^{(k)} = \lambda^{(k)}.$ The algorithm then becomes
+
+\begin{align*}
+\textbf{x}^{(0)} &\mbox{ s.t. } \left|\left|v^{(0)}\right|\right| = 1 \\ 
+\lambda^{(0)} &= \left( \textbf{v}^{(0)} \right)^{*}A  \textbf{v}^{(0)} \\
+\mbox{for } &k=1,2,\ldots \\
+\ \ \ \ &\ \mbox{\emph{Solve}}: \bigg(A-\lambda^{(k-1)} I\bigg)\textbf{w} = \textbf{x}^{(k-1)} \\
+\ \ \ \ &\ \textbf{x}^{(k)} = \frac{ \textbf{w} } { \left|\left| \textbf{w} \right|\right| } \\
+\ \ \ \ &\lambda^{(k)} = \bigg( \textbf{x}^{(k)} \bigg)^{*} A \textbf{x}^{(k)} \\
+\end{align*}
+
+We get the following convergence properties,
+\begin{align*}
+\left|\left| \textbf{x}^{(k+1)} - \left( \pm \textbf{v}_P \right) \right|\right| &= \mathcal{O}\left( \left|\left| \textbf{x}^{(k)} - \left( \pm \textbf{v}_P \right)   \right|\right|^3   \right) \\ \\
+\left| \lambda^{(k+1)} - \lambda_P \right| &= \mathcal{O}\left( \left| \lambda^{(k)} - \lambda_P  \right|^3   \right) \\
+\end{align*}
+
+that is, we have cubic convergence! These proofs are very similar to those from the Power Method. The sketch of the proof is the following. If we assume $\textbf{x}^{(k)}$ is sufficiently close to the true eigenvector, $\textbf{v}_P$, then we have
+ $$\left|\left|  \textbf{x}^{(k)} - \left( \pm \textbf{v}_P \right)   \right|\right| \leq \epsilon,$$
+and also from $RQ$ that 
+$$\left| \lambda^{(k)} - \lambda_P  \right| = \mathcal{O}\left( \epsilon^2 \right).$$
+Now if we go ahead and do one more iteration of the Rayleigh Quotient Iteration we get,
+$$ \left|\left| \textbf{x}^{(k+1)} - \left( \pm \textbf{v}_P \right) \right|\right| = \mathcal{O}\Bigg(  \left| \lambda^{(k)} - \lambda_P  \right|       \left|\left| \textbf{x}^{(k)} - \left( \pm \textbf{v}_P \right) \right|\right|    \Bigg) = \mathcal{O}\left( \epsilon^3  \right).$$
+
+
+
 
 \end{document} %%%ENDS DOCUMENT 

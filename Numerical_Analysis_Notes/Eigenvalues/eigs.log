@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  29 JUL 2016 12:53
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  29 JUL 2016 14:39
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -584,16 +584,26 @@ Underfull \hbox (badness 10000) in paragraph at lines 247--248
  []
 
 [7] [8] [9]
-Underfull \hbox (badness 10000) in paragraph at lines 338--339
+Underfull \hbox (badness 10000) in paragraph at lines 342--343
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 363--364
+Underfull \hbox (badness 10000) in paragraph at lines 367--368
 
  []
 
-[10] [11] [12] (./eigs.aux) ) 
+[10] [11]
+Underfull \hbox (badness 10000) in paragraph at lines 429--430
+
+ []
+
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 458--459
+
+ []
+
+[13] [14] (./eigs.aux) ) 
 Here is how much of TeX's memory you used:
  4242 strings out of 493747
  58440 string characters out of 3143546
@@ -601,21 +611,21 @@ Here is how much of TeX's memory you used:
  7434 multiletter control sequences out of 15000+200000
  108560 words of font info for 116 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 35i,13n,43p,665b,450s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/local/texlive/2010/texmf-dist/fonts/enc/dvip
-s/base/8r.enc}</usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fo
-urier-bb.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fou
-rier-mcl.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fou
-rier-mex.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fou
-rier-ml.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/four
-ier-mlit.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fou
-rier-ms.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putb8a
-.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb></
-usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on eigs.pdf (12 pages, 102586 bytes).
+ 35i,14n,43p,665b,450s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/local/texlive/2010/texmf-dist/fonts/enc/dvips/bas
+e/8r.enc}</usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier
+-bb.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-
+mcl.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-
+mex.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-
+ml.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-m
+lit.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-
+ms.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putb8a.pfb>
+</usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb></usr/l
+ocal/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
+Output written on eigs.pdf (14 pages, 110188 bytes).
 PDF statistics:
- 80 PDF objects out of 1000 (max. 8388607)
- 56 compressed objects within 1 object stream
+ 87 PDF objects out of 1000 (max. 8388607)
+ 61 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
