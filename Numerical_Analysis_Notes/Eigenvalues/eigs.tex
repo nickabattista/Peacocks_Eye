@@ -189,7 +189,7 @@ In fact, we can extend this to all matrices that are normal! \\
 
 
 %Schur Factorization
-\item Regardless of the spectral properties of $A$, we can write it in its Schur form. The Schur form of a matrix is where A is decomposed as, $$A=QTQ^{*}.$$ where $Q$ is an orthogonal matrix and $T$ is an upper-triangular matrix. Please note that $Q$ is not, in general, composed of eigenvectors, as in the unitary diagonalization case. Moreover, upper-triangular matrix $T$ is in the \emph{Jordan form}, but still maintains all the eigenvalues of $A$ along its main diagonal. This is because $A$ and $T$ are \emph{similar}. We now define what that means.
+\item Regardless of the spectral properties of $A$, we can write it in its \emph{Schur form}. The Schur form of a matrix is where A is decomposed as, $$A=QTQ^{*}.$$ where $Q$ is an orthogonal matrix and $T$ is an upper-triangular matrix. Please note that $Q$ is not, in general, composed of eigenvectors, as in the unitary diagonalization case. Moreover, upper-triangular matrix $T$ is in the \emph{Jordan form}, but still maintains all the eigenvalues of $A$ along its main diagonal. This is because $A$ and $T$ are \emph{similar}. We now define what that means.
 
 \begin{itemize}
 \item \emph{Definition}: Two matrices, $A$ and $B$, are similar if and only if there exists non-singular matrix $P$, such that we can write $A=PBP^{-1}.$ Furthermore if two matrices are similar, then they have the same eigenvalues. A clear example of this is the diagonalization of a matrix. 
@@ -200,10 +200,64 @@ Moreover, because of the \emph{Jordan form} of $T$, every matrix has a Schur Fac
 \begin{theorem} Every square matrix has a Schur Factorization.
 \end{theorem}
 
-Boom. Why is this so important? Well as we approach numerically finding eigenvalues, we will almost exclusively use the Schur Factorization. The only time we won't, is typically when $A$ is Hermitian, and we see the Schur Factorization becomes a Unitary Diagonalization of  $A$, that is, $T$ is diagonal. Also, whenever we have orthogonal matrices involved, computations tend to have nice stability properties, from the backward stability of how one will compute $Q$, i.e., using Householder Reflectors or Givens Rotations. 
-
+Boom. Why is this so important? Well as we approach numerically finding eigenvalues, we will almost exclusively use the Schur Factorization. The only time we won't is typically when $A$ is Hermitian, and we see the Schur Factorization becomes a Unitary Diagonalization of  $A$, that is, $T$ is diagonal. Also, whenever we have orthogonal matrices involved, computations tend to have nice stability properties, from the backward stability of how one will compute $Q$, i.e., using Householder Reflectors or Givens Rotations. 
 
 \end{enumerate}
+
+Before jumping head first into a bunch of algorithms, we will give a brief overview of where every algorithm fits into the mix. Please do not be intimidated by the names, but simply sit back and welcome some new key words and connections into your brain.
+
+
+
+%----------------------------------------------------------------------------------------
+%
+%	OVERVIEW OF NUMERICAL EIGENVALUE METHODS
+%
+%----------------------------------------------------------------------------------------
+
+\section{The Overview: the long and the short of it}
+
+This section's goal is not to confuse or intimidate you, if that happens, I am all apologies, but to simply put all the methods into a context and where they fit into the world of standard eigenvalue schemes. We will not go into detail about each method here, but will just say one or two useful notes that differentiate them from each other. Here comes the list!
+
+\begin{enumerate}
+
+% RAYLEIGH QUOTIENT
+\item The \emph{Rayleigh Quotient}, or $RQ$, can be used to find an exact eigenvalue, if the true eigenvector is known. Furthermore, if an approximation to an eigenvector is known, then we can use the $RQ$ to find the eigenvalue that would be associated with it, that is, we can find an approximate eigenvalue if we have an approximate eigenvector. s
+
+% POWER ITERATIONS / INV. POWER ITERATION
+\item There are two methods that can only find one eigenvector - the \emph{Power Iteration} and \emph{Inverse Power Iteration}.
+\begin{enumerate}
+\item The \emph{Power Method} only finds the eigenvector associated with the largest eigenvalue in magnitude. That is the only eigenvector it can find. 
+\item The \emph{Inverse Power Method} only, too, finds one eigenvector at a time; however, it finds the eigenvector associated with eigenvalue that is nearest to the shift, $\mu$, that is an input to the algorithm. In short, we have \emph{a priori} information that $\mu$ is close to an eigenvalue, so using $\mu$ we are able to find the eigenvector associated with the eigenvalue closest to $\mu$. However, we have find the whole spectrum of a matrix using this method$\ldots$with enough patience and persistence. 
+\item Once we have an approximate eigenvector, coming from either the Power Method or Inverse Power Iteration, we employ  the $RQ$ to find the associated approximate eigenvalue.
+\end{enumerate}
+
+% QR Algorithm
+\item The \emph{QR Algorithm} is able to find all the eigenvalues of a matrix at once. However, it can be both computationally expensive and slow, if not performed optimally. There are two routes one can use when using the \emph{QR Algorithm}, which we will briefly put into context here. 
+\begin{itemize}
+\item[\textbf{Route 1}]: Apply $QR$ algorithm directly to the matrix $A\in\mathbb{R}^{N\times N}$. This is \emph{slow} and \emph{expensive}. Basically the overall cost will be computing the $QR$ factorization of a matrix at each iteration, which costs $\mathcal{O}(N^3)$, so if the algorithm iterates $m$-times, the cost be will $\sim \frac{4}{3}mN^3$. This may not seem like a big deal, but $m$ could potentially be rather large.  
+\item[\textbf{Route 2}]: Before applying the $QR$ algorithm right away to $A$, we will massage it into upper-Hessenberg form, $H$, and then apply the $QR$ algorithm in two steps, e.g., 
+\begin{itemize}
+\item[\textbf{Step 1}]: Massage the matrix to upper Hessenberg form, $H$, using Householder Reflectors or Givens Rotations, which costs $\mathcal{O}(N^3)$. Note, if $A$ is exceptionally large, one can use a Krylov method, i.e., the \emph{Arnoldi} iteration, or \emph{Lanczos} iteration, if the matrix is Hermitian, to transform the matrix to upper Heisenberg form.  
+\item[\textbf{Step 2}]: Apply the $QR$ algorithm to the upper Heisenberg matrix, $H$. Each step will now cost $\mathcal{O}(N^2)$, making these two steps computationally less expensive and faster than simply applying the $QR$ algorithm to the original matrix $A$. 
+\end{itemize}
+\end{itemize}
+
+\end{enumerate}
+
+
+
+We will now proceed with the first algorithms anyone learns when computing eigenvalues and eigenvectors numerically - \emph{Rayleigh Quotient}, \emph{Power Iteration}, and \emph{Inverse Power Iteration}.
+
+
+%----------------------------------------------------------------------------------------
+%
+%	Rayleigh Quotient, Power Iteration, and Inverse Power Iteration
+%
+%----------------------------------------------------------------------------------------
+
+\section{Rayleigh Quotient, Power Iteration, and Inverse Power Iteration - oh my!}
+
+
 
 
 
