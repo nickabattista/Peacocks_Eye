@@ -485,7 +485,12 @@ $$\left| \lambda^{(k)} - \lambda_P  \right| = \mathcal{O}\left( \epsilon^2 \righ
 Now if we go ahead and do one more iteration of the Rayleigh Quotient Iteration we get,
 $$ \left|\left| \textbf{x}^{(k+1)} - \left( \pm \textbf{v}_P \right) \right|\right| = \mathcal{O}\Bigg(  \left| \lambda^{(k)} - \lambda_P  \right|       \left|\left| \textbf{x}^{(k)} - \left( \pm \textbf{v}_P \right) \right|\right|    \Bigg) = \mathcal{O}\left( \epsilon^3  \right).$$
 
-
+One last thing to note is the computational expense of the Rayleigh Quotient Iteration (or Inverse Power Iteration for that matter). Due to solving a linear system at each iteration, this could become very expensive, rather quickly$\ldots$making Rayleigh Quotient Iteration definitely the ideal choice over the Inverse Power Iteration, since it exhibits cubic convergence. The expense is as follows,
+\begin{enumerate}
+\item If $A$ is a dense matrix, then solving $\bigg(A-\lambda^{(k-1)} I\bigg)\textbf{w} = \textbf{x}^{(k-1)}$ will most likely take $\mathcal{O}\left(N^3 \right)$ operations.
+\item If $A$ is upper-Hessenberg, then each step would take $\mathcal{O}\left( N^2  \right)$ operations.
+\item If $A$ is tridiagonal, then each step takes $\mathcal{O}(N)$ operations. 
+\end{enumerate}
 
 
 \end{document} %%%ENDS DOCUMENT 

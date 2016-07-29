@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  29 JUL 2016 14:39
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  29 JUL 2016 14:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -622,7 +622,7 @@ lit.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/fourier/fourier-
 ms.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putb8a.pfb>
 </usr/local/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb></usr/l
 ocal/texlive/2010/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on eigs.pdf (14 pages, 110188 bytes).
+Output written on eigs.pdf (14 pages, 111066 bytes).
 PDF statistics:
  87 PDF objects out of 1000 (max. 8388607)
  61 compressed objects within 1 object stream
