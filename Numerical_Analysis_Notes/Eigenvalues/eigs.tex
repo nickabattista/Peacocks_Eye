@@ -234,17 +234,17 @@ This section's goal is not to confuse or intimidate you, if that happens, I am a
 % QR Algorithm
 \item The \emph{QR Algorithm} is able to find all the eigenvalues of a matrix at once. However, it can be both computationally expensive and slow, if not performed optimally. There are two routes one can use when using the \emph{QR Algorithm}, which we will briefly put into context here. 
 \begin{itemize}
-\item[\textbf{Route 1}]: Apply $QR$ algorithm directly to the matrix $A\in\mathbb{R}^{N\times N}$. This is \emph{slow} and \emph{expensive}. Basically the overall cost will be computing the $QR$ factorization of a matrix at each iteration, which costs $\mathcal{O}(N^3)$, so if the algorithm iterates $m$-times, the cost be will $\sim \frac{4}{3}mN^3$. This may not seem like a big deal, but $m$ could potentially be rather large.  
+\item[\textbf{Route 1}]: Apply $QR$ algorithm directly to the matrix $A\in\mathbb{R}^{N\times N}$. This is \emph{slow} and \emph{expensive}. Basically the overall cost will be computing the $QR$ factorization of a matrix at each iteration, which costs $\mathcal{O}(N^3)$, so if the algorithm iterates $m$-times, the cost be will $\sim \frac{4}{3}mN^3$. This may not seem like a big deal, but $m$ could potentially be rather large, making the potential overall cost for the algorithm $\mathcal{O}(N^4).$
 \item[\textbf{Route 2}]: Before applying the $QR$ algorithm right away to $A$, we will massage it into upper-Hessenberg form, $H$, and then apply the $QR$ algorithm in two steps, e.g., 
 \begin{itemize}
-\item[\textbf{Step 1}]: Massage the matrix to upper Hessenberg form, $H$, using Householder Reflectors or Givens Rotations, which costs $\mathcal{O}(N^3)$. Note, if $A$ is exceptionally large, one can use a Krylov method, i.e., the \emph{Arnoldi} iteration, or \emph{Lanczos} iteration, if the matrix is Hermitian, to transform the matrix to upper Heisenberg form.  
+\item[\textbf{Step 1}]: Massage the matrix to upper Hessenberg form, $H$, using Householder Reflectors or Givens Rotations, which costs $\mathcal{O}(N^3)$. Note, if $A$ is exceptionally large, one can use a Krylov method, i.e., the \emph{Arnoldi} iteration, or \emph{Lanczos} iteration, if the matrix is Hermitian, to transform the matrix to upper Heisenberg form. Furthermore, this step is backward stable! 
 \item[\textbf{Step 2}]: Apply the $QR$ algorithm to the upper Heisenberg matrix, $H$. Each step will now cost $\mathcal{O}(N^2)$, making these two steps computationally less expensive and faster than simply applying the $QR$ algorithm to the original matrix $A$. 
 \end{itemize}
 \end{itemize}
 
 \end{enumerate}
 
-
+The long and the short of it is, if you only care about one particular eigenvalue, use the Power Iteration or Inverse Power Iteration, but if you need the full spectrum of $A$, use the $QR$ algorithm and use \emph{Route 2}, that is the two step eigenvalue solving scheme. \\
 
 We will now proceed with the first algorithms anyone learns when computing eigenvalues and eigenvectors numerically - \emph{Rayleigh Quotient}, \emph{Power Iteration}, and \emph{Inverse Power Iteration}.
 
@@ -257,10 +257,150 @@ We will now proceed with the first algorithms anyone learns when computing eigen
 
 \section{Rayleigh Quotient, Power Iteration, and Inverse Power Iteration - oh my!}
 
+Let's begin the algorithmic discussion by analyzing the methods that can only give you one eigenvector, or eigenvalue, either at a time, or in total. We will perform error analysis, as well, so get ready for some fun! Our journey begins with the Rayleigh Quotient.
+
+%
+% RAYLEIGH QUOTIENT
+%
+\subsection{Rayleigh Quotient}
+
+The Rayleigh Quotient pops right out of the eigenvalue equation, $A\textbf{x} = \lambda \textbf{x}$, and solving for $\lambda$, i.e., 
+\begin{align*}
+\lambda \textbf{x} &= A\textbf{x} \\ 
+\lambda (\textbf{x}^{*} \textbf{x}) &= \textbf{x}^{*} A\textbf{x} \\ 
+\lambda &= \frac{  \textbf{x}^{*} A\textbf{x}       }{  \textbf{x}^{*}\textbf{x}       }. \\
+\end{align*}
+
+The last line is what we define the Rayleigh Quotient to be, 
+\begin{equation}
+\label{rayleigh_quotient} r(\textbf{x}) =  \frac{  \textbf{x}^{*} A\textbf{x}       }{  \textbf{x}^{*}\textbf{x}  }.
+\end{equation}
+
+However, like mentioned before, the $RQ$ is not only useful for computing the exact eigenvalue when one knows the exact eigenvector. Furthermore, the $RQ$ minimizes the $2$-norm of $||A\textbf{x}-\alpha\textbf{x}||_2.$ To do this, we begin by minimizing $r(x)$, e.g.,
+\begin{align*}
+\frac{ \partial r(x) }{ \partial x_j } &= \frac{  \frac{ \partial}{ \partial x_j} \big( \textbf{x}^* A\textbf{x} \big) }{  \textbf{x}^*\textbf{x}  } - \frac{ \big(\textbf{x}^*A\textbf{x}  \big) \frac{\partial}{\partial x_j }  (\textbf{x}^*\textbf{x} )    }{  \textbf{x}^* \textbf{x} } \\ \\
+%
+	&= \frac{ 2(A\textbf{x})_j }{   \textbf{x}^*\textbf{x} } - \frac{  \big(\textbf{x}^*A\textbf{x}\big)(2x_j)    }{ ( \textbf{x}^*\textbf{x})^2      } \\ \\ 
+	&= \frac{2}{ \textbf{x}^*\textbf{x} } \left[  (A\textbf{x})_j - \left( \frac{  \textbf{x}^*A\textbf{x} }{ \textbf{x}^*\textbf{x} }      \right) x_j       \right] \\ \\
+	&= \frac{2}{ \textbf{x}^*\textbf{x} } \bigg(  A\textbf{x} - r(\textbf{x}) \textbf{x}   \bigg)_j \\
+\end{align*}
+
+and hence we have that $$\nabla r(\textbf{x}) = \frac{2}{ \textbf{x}^*\textbf{x} } \big[  A\textbf{x} - r(\textbf{x}) \textbf{x} \big].$$
+
+Therefore $r(x)$ is minimized when \textbf{x} is an eigenvector and $r(\textbf{x})$ is its associated eigenvalue. However, if $\textbf{x}$ is not a true eigenvector of $A$, but an approximation to one, how accurate will the $RQ$ be? It turns out that if \textbf{x} is sufficiently close to a true eigenvector, then the $RQ$ is quadratically accurate. We will go ahead and prove this now!
+
+%
+% PROOF RQ is QUADRATICALLY ACCURATE
+%
+\subsubsection{Proof $RQ$ is Quadratically Accurate}
+
+To begin this proof, we will assume that $\{ \textbf{v}_j \}$ are the true eigenvectors and $\textbf{x}$ is our approximated eigenvector. We can expand \textbf{x} in terms of the eigenvector basis, $$\textbf{x} = \sum_j a_j \textbf{v}_j.$$
+
+Now we begin. Where we are going, we don't need roads, I mean we will assume that if \textbf{x} is sufficiently close to the eigenvector $\textbf{v}_P$, then we have $\left| \frac{a_k}{a_P}  \right| < \epsilon$ for all $k\neq P$. Before we use this fact, we must first do some computations. Let's begin with $RQ$,
+
+\begin{align*}
+r(\textbf{x} )&= \frac{  \sum_j a_j \textbf{v}_j^{*} A  \sum_k a_k \textbf{v}_k   }{  \sum_j a_j \textbf{v}_j^{*} \sum_k a_k \textbf{v}_k   } \\ \\
+	%
+	&= \frac{ \sum_j a_j \textbf{v}_j^{*} \sum_k a_k (A \textbf{v}_k)   }{  \sum_j \sum_k a_j a_k \textbf{v}_j^{*} \textbf{v}_k   } \\ \\
+	%
+	&=  \frac{ \sum_j a_j \textbf{v}_j^{*} \sum_k a_k ( \lambda_k \textbf{v}_k )  }{  \sum_j \sum_k a_j a_k \textbf{v}_j^{*} \textbf{v}_k   } \\ \\
+	%
+	&= \frac{   \sum_j \sum_k a_j a_k \lambda_k \textbf{v}_j^{*} \textbf{v}_k     }{   \sum_j \sum_k a_j a_k \textbf{v}_j^{*} \textbf{v}_k        } \\ 
+\end{align*}
+
+Now we proceed to subtract $\lambda_P$ from $r(\textbf{x})$, e.g., 
+
+\begin{align*}
+r(\textbf{x}) - \lambda_P &= \frac{   \sum_j \sum_k a_j a_k \lambda_k \textbf{v}_j^{*} \textbf{v}_k     }{   \sum_j \sum_k a_j a_k \textbf{v}_j^{*} \textbf{v}_k        } - \lambda_P \\ \\
+	%
+	&= \frac{ \sum_{j\neq P} \sum_{k\neq P} \left( \frac{a_ja_k}{a_P^2} \right) \lambda_k \textbf{v}_j^{*}\textbf{v}_k + \lambda_P     }{  \sum_{j\neq P} \sum_{k\neq P} \left( \frac{a_ja_k}{a_P^2} \right) \textbf{v}_j^{*}\textbf{v}_k + 1  } - \lambda_P \\ 
+\end{align*}
+
+Using one of our favorite Taylor Series, $\frac{1}{1+x} = 1-x+x^2-x^3+\ldots$, since $\left| \frac{a_k}{a_P}  \right| < \epsilon$, we get
+
+\begin{align*}
+	&= \Big( \sum_{j\neq P} \sum_{k\neq P} \left( \frac{a_ja_k}{a_P^2} \right) \lambda_k \textbf{v}_j^{*}\textbf{v}_k + \lambda_P   \Big) \left[  1 - \left( \sum_{j\neq P} \sum_{k\neq P} \left( \frac{a_ja_k}{a_P^2} \right) \textbf{v}_j^{*}\textbf{v}_k   \right) +  \ldots  \right] - \lambda_P \\ \\
+	%
+	&= \left[  \sum_{j\neq P} \sum_{k\neq P} \left( \frac{a_ja_k}{a_P^2} \right) \lambda_k \textbf{v}_j^{*}\textbf{v}_k + \lambda_P - \lambda_P \sum_{j\neq P} \sum_{k\neq P} \left( \frac{a_ja_k}{a_P^2} \right)  \textbf{v}_j^{*}\textbf{v}_k + \lambda_P    \right] + \mbox{ \emph{higher order terms} } \\ \\
+	%
+	&\approx \mathcal{O}(\epsilon^2). \\
+\end{align*}
+
+Hence we find that $r(\textbf{x}) - \lambda_P = \mathcal{O}(\epsilon^2).$ Welp, now that we know how accurate $RQ$ is, let's dive into some methods that produce approximate eigenvectors so we can put the $RQ$ to use! We will introduce the Power Method, followed closely behind by it's cousin, the Inverse Power Iteration. 
 
 
 
+%
+% POWER ITERATION
+%
+\subsection{Power Iteration}
 
+The Power Iteration, a method appropriately named as we will be hammering an initial guess of an eigenvector by the matrix $A$, over and over. That is, we will just continually multiply $A$ onto the vector, $\textbf{x}^{(0)}$. It turns out that by continually multiply $A$ onto $\textbf{x}^{(0)}$,  it will begin to align itself in the direction of the eigenvector associated with the largest eigenvalue in magnitude. \\
 
+The algorithm can be written simply as, 
 
-\end{document} %%%ENDS DOCUMENT
+\begin{align*}
+\textbf{x}^{(0)} &\mbox{ s.t. } \left|\left|v^{(0)}\right|\right| = 1 \\ 
+\mbox{for } &k=1,2,\ldots \\
+\ \ \ \ &\ \textbf{w} = A\textbf{x}^{(k-1)} \\
+\ \ \ \ &\ \textbf{x}^{(k)} = \frac{ \textbf{w} } { \left|\left| \textbf{w} \right|\right| } \\
+\ \ \ \ &\lambda^{(k)} = \bigg( \textbf{x}^{(k)} \bigg)^{*} A \textbf{x}^{(k)} \\
+\end{align*}
+
+Well, how does this actually work? It turns out the analysis is not terribly complicated. Let's show why this converges to the eigenvector associated with the largest eigenvalue in magnitude. First we expand the initial guess vector in terms of the eigenbasis,
+
+$$\textbf{x}^{(0)} = a_1 \textbf{v}_1 + a_2 \textbf{v}_2 + \ldots + a_N \textbf{v}_N.$$
+
+Next after iterating $k$ times, i.e., $k-$multiples of $A$ onto $\textbf{x}^{(0)}$ and letting $c_k$ be a normalization parameter and assuming that $\left| \lambda_1 \right| > \left| \lambda_2 \right| >\ldots> \left| \lambda_N \right|$, we get
+
+\begin{align*}
+\textbf{x}^{(k)} &= c_k A^k \textbf{x}^{(0)} \\
+	&= c_k \Big( a_1 A^k \textbf{v}_1 + a_2 A^k \textbf{v}_2 +\ldots +  a_N A^k \textbf{v}_N  \Big) \\
+	&= c_k \Big( a_1 \lambda_1^k \textbf{v}_1 + a_2 \lambda_2^k \textbf{v}_2  +\ldots+ a_N \lambda_N^k \textbf{v}_N   \Big)\\
+	&= c_k \lambda_1^k \left(  a_1 \textbf{v}_1 + a_2\left( \frac{\lambda_2}{\lambda_1}  \right)^k \textbf{v}_2 +\ldots+  a_N\left( \frac{\lambda_N}{\lambda_1}  \right)^k \textbf{v}_N    \right). \\
+\end{align*}
+
+As $k\rightarrow\infty$, we see this process will converge to $\textbf{x}_{\infty} = c_{\infty} \lambda^{\infty} a_1 \textbf{v}_1$. If you forgive that abusive notation, it is clear that the Power Method will be able to capture the single eigenvector associated with the largest eigenvalue in magnitude. Unfortunately, this process will not be able to produce any others for us, but that is where \emph{Inverse Power Iteration} comes in. \\
+
+Before we get to that algorithm, we will discuss the convergence of the Power Method to the eigenvector as well as the convergence to its associated eigenvalue, using $RQ$.
+
+%
+% Convergence of PM to Dominant E-Vec
+%
+\subsubsection{Convergence of Power Method to Dominant Eigenvector}
+
+ Here we will show that the convergence of the Power Method to the dominant eigenvector is $$\left|\left| \textbf{x}^{(k)} - (\pm \textbf{v}_1) \right| \right| = \mathcal{O}\left( \left| \frac{\lambda_2}{\lambda_1}  \right|^k  \right).$$
+ 
+We will begin with $\textbf{x}^{(k)} - (\pm \textbf{v}_1)$ and massage it until we get our result. Let's take a look.
+\begin{align*}
+\textbf{x}^{(k)} - (\pm \textbf{v}_1) &= c_k \left( \sum_{j=1}^N a_j \lambda_j^k \textbf{v}_j \right) - (\pm \textbf{v}_1) \\ \\
+	%
+ 	&= c_k \lambda_1^k a_1 \textbf{v}_1 + c_k \sum_{j=2}^N a_j \left( \frac{ \lambda_j}{\lambda_1} \right)^k \textbf{v}_j - (\pm \textbf{v}_1). \\
+\end{align*}
+
+Letting the normalization factor, be $c_k = \frac{1}{ \lambda^k a_1 }$, we get
+
+$$\textbf{x}^{(k)} - (\pm \textbf{v}_1) = c_k \sum_{j=2}^N a_j \left( \frac{ \lambda_j}{\lambda_1} \right)^k \textbf{v}_j,$$ 
+
+and the largest error term will be from the $j=2$ term, and hence we obtain the final result, 
+
+$$\left|\left| \textbf{x}^{(k)} - (\pm \textbf{v}_1) \right| \right| = \mathcal{O}\left( \left| \frac{\lambda_2}{\lambda_1}  \right|^k  \right).$$
+
+Welp, we got the result, although the convergence is only linear, but hey, it still converges! Not too bad for such a simple algorithm. What does this mean for the convergence its associated eigenvalue? 
+
+%
+% Convergence of PM for Associated Eigenvalue
+%
+\subsubsection{Convergence of Power Method for Dominant Eigenvalue}
+
+We will show that using the Power Method for finding the dominant eigenvalue converges as, $$\left|\left| r(\textbf{x}^{(k)} - \lambda_1 \right|\right| = \mathcal{O}\left( \epsilon^{2k} \right).$$
+
+This is a rather simple proof, in which we will just simply use our previous results for the accuracy of the $RQ$ and the convergence of the Power Method to the dominant eigenvector. First from the accuracy of the $RQ$ we get 
+
+$$r(\textbf{x}^{(k)} - r(\textbf{v}_1) =  \mathcal{O}\left(\epsilon^k\right),$$
+
+and hence $$r(\textbf{x}^{(k)} - r(\textbf{v}_1) = \mathcal{O}\left( \left|\left| \textbf{x}^{(k)} - \textbf{v}_1   \right|\right|^2  \right).$$
+
+Now using the convergence of the Power Method to dominant eigenvector, we find that $$r(\textbf{x}^{(k)} - r(\textbf{v}_1) = \mathcal{O}\left( \left|\left| \textbf{x}^{(k)} - \textbf{v}_1   \right|\right|^2  \right) = \mathcal{O}\left( \left( \epsilon^k \right) ^2 \right) = \mathcal{O}\left( \epsilon^{2k}  \right).$$
+
+\end{document} %%%ENDS DOCUMENT 
